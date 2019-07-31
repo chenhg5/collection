@@ -357,3 +357,133 @@ func (c MapArrayCollection) Dd() {
 func (c MapArrayCollection) Dump() {
 	dump(c)
 }
+
+func (c MapArrayCollection) Every(cb CB) bool {
+	for key, value := range c.value {
+		if !cb(key, value) {
+			return false
+		}
+	}
+	return true
+}
+
+func (c MapArrayCollection) Filter(cb CB) Collection {
+	var d = make([]map[string]interface{}, 0)
+	copy(d, c.value)
+	for key, value := range c.value {
+		if !cb(key, value) {
+			d = append(d[:key], d[key+1:]...)
+		}
+	}
+	return MapArrayCollection{
+		value: d,
+	}
+}
+
+func (c MapArrayCollection) First(cbs ...CB) interface{} {
+	if len(cbs) > 0 {
+		for key, value := range c.value {
+			if cbs[0](key, value) {
+				return value
+			}
+		}
+		return nil
+	} else {
+		if len(c.value) > 0 {
+			return c.value[0]
+		} else {
+			return nil
+		}
+	}
+}
+
+func (c MapArrayCollection) FirstWhere(key string, values ...interface{}) map[string]interface{} {
+	if len(values) < 1 {
+		for _, value := range c.value {
+			if isTrue(value[key]) {
+				return value
+			}
+		}
+	} else if len(values) < 2 {
+		for _, value := range c.value {
+			if value[key] == values[0] {
+				return value
+			}
+		}
+	} else {
+		switch values[0].(string) {
+		case ">":
+			for _, value := range c.value {
+				if newDecimalFromInterface(value[key]).GreaterThan(newDecimalFromInterface(values[0])) {
+					return value
+				}
+			}
+		case ">=":
+			for _, value := range c.value {
+				if newDecimalFromInterface(value[key]).GreaterThanOrEqual(newDecimalFromInterface(values[0])) {
+					return value
+				}
+			}
+		case "<":
+			for _, value := range c.value {
+				if newDecimalFromInterface(value[key]).LessThan(newDecimalFromInterface(values[0])) {
+					return value
+				}
+			}
+		case "<=":
+			for _, value := range c.value {
+				if newDecimalFromInterface(value[key]).LessThanOrEqual(newDecimalFromInterface(values[0])) {
+					return value
+				}
+			}
+		case "=":
+			for _, value := range c.value {
+				if value[key] == values[0] {
+					return value
+				}
+			}
+		}
+	}
+	return map[string]interface{}{}
+}
+
+func (c MapArrayCollection) GroupBy(k string) Collection {
+	var d = make(map[string]interface{}, 0)
+	for _, value := range c.value {
+		for kk, vv := range value {
+			if kk == k {
+				vvKey := fmt.Sprintf("%v", vv)
+				if _, ok := d[vvKey]; ok {
+					am := d[vvKey].([]map[string]interface{})
+					am = append(am, value)
+					d[vvKey] = am
+				} else {
+					d[vvKey] = []map[string]interface{}{value}
+				}
+			}
+		}
+	}
+	return MapCollection{
+		value: d,
+	}
+}
+
+func (c MapArrayCollection) Implode(key string, delimiter string) string {
+	var res = ""
+	for _, value := range c.value {
+		for kk, vv := range value {
+			if kk == key {
+				res += fmt.Sprintf("%v", vv) + delimiter
+			}
+		}
+	}
+	return res[:len(res)-1]
+}
+
+func (c MapArrayCollection) IsEmpty() bool {
+	return len(c.value) == 0
+}
+
+func (c MapArrayCollection) IsNotEmpty() bool {
+	return len(c.value) != 0
+}

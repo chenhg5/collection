@@ -227,3 +227,107 @@ func (c NumberArrayCollection) Dd() {
 func (c NumberArrayCollection) Dump() {
 	dump(c)
 }
+
+func (c NumberArrayCollection) Diff(m interface{}) Collection {
+	ms := newDecimalArray(m)
+	var d = make([]decimal.Decimal, 0)
+	for _, value := range c.value {
+		exist := false
+		for i := 0; i < len(ms); i++ {
+			if ms[i].Equal(value) {
+				exist = true
+				break
+			}
+		}
+		if !exist {
+			d = append(d, value)
+		}
+	}
+	return NumberArrayCollection{
+		value: d,
+	}
+}
+
+func (c NumberArrayCollection) Each(cb func(item, value interface{}) (interface{}, bool)) Collection {
+	var d = make([]decimal.Decimal, 0)
+	var (
+		newValue interface{}
+		stop     = false
+	)
+	for key, value := range c.value {
+		if !stop {
+			newValue, stop = cb(key, value)
+			d = append(d, newDecimalFromInterface(newValue))
+		} else {
+			d = append(d, value)
+		}
+	}
+	return NumberArrayCollection{
+		value: d,
+	}
+}
+
+func (c NumberArrayCollection) Every(cb CB) bool {
+	for key, value := range c.value {
+		if !cb(key, value) {
+			return false
+		}
+	}
+	return true
+}
+
+func (c NumberArrayCollection) Filter(cb CB) Collection {
+	var d = make([]decimal.Decimal, 0)
+	for key, value := range c.value {
+		if cb(key, value) {
+			d = append(d, value)
+		}
+	}
+	return NumberArrayCollection{
+		value: d,
+	}
+}
+
+func (c NumberArrayCollection) First(cbs ...CB) interface{} {
+	if len(cbs) > 0 {
+		for key, value := range c.value {
+			if cbs[0](key, value) {
+				return value
+			}
+		}
+		return nil
+	} else {
+		if len(c.value) > 0 {
+			return c.value[0]
+		} else {
+			return nil
+		}
+	}
+}
+
+func (c NumberArrayCollection) ForPage(page, size int) Collection {
+	var d = make([]decimal.Decimal, 0)
+	copy(d, c.value)
+	if size > len(d) || size*(page-1) > len(d) {
+		return NumberArrayCollection{
+			value: d,
+		}
+	}
+	if (page+1)*size > len(d) {
+		return NumberArrayCollection{
+			value: d[(page-1)*size:],
+		}
+	} else {
+		return NumberArrayCollection{
+			value: d[(page-1)*size : (page)*size],
+		}
+	}
+}
+
+func (c NumberArrayCollection) IsEmpty() bool {
+	return len(c.value) == 0
+}
+
+func (c NumberArrayCollection) IsNotEmpty() bool {
+	return len(c.value) != 0
+}

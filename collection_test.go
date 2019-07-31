@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/magiconair/properties/assert"
 	"github.com/shopspring/decimal"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -219,4 +220,35 @@ func TestCollection_Dump(t *testing.T) {
 	Collect(numbers).Dump()
 	Collect(a).Dump()
 	Collect(foo[2]).Dump()
+}
+
+func TestBaseCollection_Diff(t *testing.T) {
+	a := []string{"h", "e", "l", "l", "o"}
+	assert.Equal(t, Collect(a).Diff([]string{"e", "o"}).ToStringArray(), []string{"h", "l", "l"})
+	c := []int{3, 4, 5, 6, 7, 8}
+	assert.Equal(t, Collect(c).Diff([]int{5, 6}).ToNumberArray(), []decimal.Decimal{nd(3), nd(4), nd(7), nd(8)})
+}
+
+func TestBaseCollection_DiffAssoc(t *testing.T) {
+	a := map[string]interface{}{
+		"name": "mike",
+		"sex":  1,
+	}
+	assert.Equal(t, reflect.DeepEqual(Collect(a).DiffAssoc(map[string]interface{}{
+		"name": "miker",
+	}).ToMap(), map[string]interface{}{
+		"name": "miker",
+	}), true)
+}
+
+func TestBaseCollection_DiffKeys(t *testing.T) {
+	a := map[string]interface{}{
+		"name": "mike",
+		"sex":  1,
+	}
+	assert.Equal(t, reflect.DeepEqual(Collect(a).DiffKeys(map[string]interface{}{
+		"name": "miker",
+	}).ToMap(), map[string]interface{}{
+		"sex": 1,
+	}), true)
 }

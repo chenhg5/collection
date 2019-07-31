@@ -5,7 +5,6 @@ import (
 	"encoding/gob"
 	"fmt"
 	"github.com/shopspring/decimal"
-	"os"
 )
 
 func Collect(src interface{}) Collection {
@@ -216,76 +215,80 @@ type Collection interface {
 	Dd()
 
 	// reference: https://laravel.com/docs/5.8/collections#method-diff
-	Diff()
+	Diff(interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-diffAssoc
-	DiffAssoc()
+	// reference: https://laravel.com/docs/5.8/collections#method-diffassoc
+	DiffAssoc(map[string]interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-diffKeys
-	DiffKeys()
+	// reference: https://laravel.com/docs/5.8/collections#method-diffkeys
+	DiffKeys(map[string]interface{}) Collection
 
 	// reference: https://laravel.com/docs/5.8/collections#method-dump
 	Dump()
 
+	// reference: https://laravel.com/docs/5.8/collections#method-duplicates
+
 	// reference: https://laravel.com/docs/5.8/collections#method-each
-	Each()
+	Each(func(item, value interface{}) (interface{}, bool)) Collection
 
 	// reference: https://laravel.com/docs/5.8/collections#method-eachSpread
 	EachSpread()
 
 	// reference: https://laravel.com/docs/5.8/collections#method-every
-	Every()
+	Every(CB) bool
 
 	// reference: https://laravel.com/docs/5.8/collections#method-except
-	Except()
+	Except([]string) Collection
 
 	// reference: https://laravel.com/docs/5.8/collections#method-filter
-	Filter()
+	Filter(CB) Collection
 
 	// reference: https://laravel.com/docs/5.8/collections#method-first
-	First()
+	First(...CB) interface{}
 
 	// reference: https://laravel.com/docs/5.8/collections#method-firstWhere
-	FirstWhere()
+	FirstWhere(key string, values ...interface{}) map[string]interface{}
 
 	// reference: https://laravel.com/docs/5.8/collections#method-flatMap
-	FlatMap()
+	FlatMap(func(value interface{}) interface{}) Collection
 
 	// reference: https://laravel.com/docs/5.8/collections#method-flatten
-	Flatten()
+	Flatten() Collection
 
 	// reference: https://laravel.com/docs/5.8/collections#method-flip
-	Flip()
+	Flip() Collection
 
 	// reference: https://laravel.com/docs/5.8/collections#method-forget
-	Forget()
+	Forget(string) Collection
 
 	// reference: https://laravel.com/docs/5.8/collections#method-forPage
-	ForPage()
+	ForPage(int, int) Collection
 
 	// reference: https://laravel.com/docs/5.8/collections#method-get
-	Get()
+	Get(string, ...interface{}) interface{}
 
 	// reference: https://laravel.com/docs/5.8/collections#method-groupBy
-	GroupBy()
+	GroupBy(string) Collection
 
 	// reference: https://laravel.com/docs/5.8/collections#method-has
-	Has()
+	Has(...string) bool
 
 	// reference: https://laravel.com/docs/5.8/collections#method-implode
-	Implode()
+	Implode(string, string) string
 
 	// reference: https://laravel.com/docs/5.8/collections#method-intersect
-	Intersect()
+	Intersect([]string) Collection
 
 	// reference: https://laravel.com/docs/5.8/collections#method-intersectByKeys
-	IntersectByKeys()
+	IntersectByKeys(map[string]interface{}) Collection
 
 	// reference: https://laravel.com/docs/5.8/collections#method-isEmpty
-	IsEmpty()
+	IsEmpty() bool
 
 	// reference: https://laravel.com/docs/5.8/collections#method-isNotEmpty
-	IsNotEmpty()
+	IsNotEmpty() bool
+
+	// reference: https://laravel.com/docs/5.8/collections#method-join
 
 	// reference: https://laravel.com/docs/5.8/collections#method-keyBy
 	KeyBy()
@@ -506,9 +509,46 @@ func newDecimalFromInterface(a interface{}) decimal.Decimal {
 	return d
 }
 
+func isTrue(a interface{}) bool {
+	switch a.(type) {
+	case uint:
+		return a.(uint) != uint(0)
+	case uint8:
+		return a.(uint8) != uint8(0)
+	case uint16:
+		return a.(uint16) != uint16(0)
+	case uint32:
+		return a.(uint32) != uint32(0)
+	case uint64:
+		return a.(uint64) != uint64(0)
+	case int:
+		return a.(int) != int(0)
+	case int8:
+		return a.(int8) != int8(0)
+	case int16:
+		return a.(int16) != int16(0)
+	case int32:
+		return a.(int32) != int32(0)
+	case int64:
+		return a.(int64) != int64(0)
+	case float32:
+		return a.(float32) != float32(0)
+	case float64:
+		return a.(float64) != float64(0)
+	case string:
+		return a.(string) != ""
+	case bool:
+		return a.(bool)
+	default:
+		return false
+	}
+}
+
 func nd(a interface{}) decimal.Decimal {
 	return newDecimalFromInterface(a)
 }
+
+type CB func(item, value interface{}) bool
 
 func copyMap(m map[string]interface{}) map[string]interface{} {
 	var buf bytes.Buffer
@@ -528,9 +568,57 @@ func copyMap(m map[string]interface{}) map[string]interface{} {
 
 func dd(c Collection) {
 	fmt.Println(c)
-	os.Exit(0)
 }
 
 func dump(c Collection) {
 	fmt.Println(c)
+}
+
+func newDecimalArray(src interface{}) []decimal.Decimal {
+	switch src.(type) {
+	case []int:
+		var d = make([]decimal.Decimal, len(src.([]int)))
+		for k, v := range src.([]int) {
+			d[k] = decimal.New(int64(v), 0)
+		}
+		return d
+	case []int8:
+		var d = make([]decimal.Decimal, len(src.([]int8)))
+		for k, v := range src.([]int8) {
+			d[k] = decimal.New(int64(v), 0)
+		}
+		return d
+	case []int16:
+		var d = make([]decimal.Decimal, len(src.([]int16)))
+		for k, v := range src.([]int16) {
+			d[k] = decimal.New(int64(v), 0)
+		}
+		return d
+	case []int32:
+		var d = make([]decimal.Decimal, len(src.([]int32)))
+		for k, v := range src.([]int32) {
+			d[k] = decimal.New(int64(v), 0)
+		}
+		return d
+	case []int64:
+		var d = make([]decimal.Decimal, len(src.([]int64)))
+		for k, v := range src.([]int64) {
+			d[k] = decimal.New(v, 0)
+		}
+		return d
+	case []float32:
+		var f = make([]decimal.Decimal, len(src.([]float32)))
+		for k, v := range src.([]float32) {
+			f[k] = decimal.NewFromFloat32(v)
+		}
+		return f
+	case []float64:
+		var f = make([]decimal.Decimal, len(src.([]float64)))
+		for k, v := range src.([]float64) {
+			f[k] = decimal.NewFromFloat(v)
+		}
+		return f
+	default:
+		return nil
+	}
 }

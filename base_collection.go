@@ -107,15 +107,15 @@ func (c BaseCollection) Dd() {
 	panic("not implement")
 }
 
-func (c BaseCollection) Diff() {
+func (c BaseCollection) Diff(interface{}) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) DiffAssoc() {
+func (c BaseCollection) DiffAssoc(map[string]interface{}) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) DiffKeys() {
+func (c BaseCollection) DiffKeys(map[string]interface{}) Collection {
 	panic("not implement")
 }
 
@@ -123,7 +123,7 @@ func (c BaseCollection) Dump() {
 	panic("not implement")
 }
 
-func (c BaseCollection) Each() {
+func (c BaseCollection) Each(func(item, value interface{}) (interface{}, bool)) Collection {
 	panic("not implement")
 }
 
@@ -131,75 +131,75 @@ func (c BaseCollection) EachSpread() {
 	panic("not implement")
 }
 
-func (c BaseCollection) Every() {
+func (c BaseCollection) Every(CB) bool {
 	panic("not implement")
 }
 
-func (c BaseCollection) Except() {
+func (c BaseCollection) Except([]string) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Filter() {
+func (c BaseCollection) Filter(CB) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) First() {
+func (c BaseCollection) First(...CB) interface{} {
 	panic("not implement")
 }
 
-func (c BaseCollection) FirstWhere() {
+func (c BaseCollection) FirstWhere(key string, values ...interface{}) map[string]interface{} {
 	panic("not implement")
 }
 
-func (c BaseCollection) FlatMap() {
+func (c BaseCollection) FlatMap(func(value interface{}) interface{}) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Flatten() {
+func (c BaseCollection) Flatten() Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Flip() {
+func (c BaseCollection) Flip() Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Forget() {
+func (c BaseCollection) Forget(string) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) ForPage() {
+func (c BaseCollection) ForPage(int, int) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Get() {
+func (c BaseCollection) Get(string, ...interface{}) interface{} {
 	panic("not implement")
 }
 
-func (c BaseCollection) GroupBy() {
+func (c BaseCollection) GroupBy(string) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Has() {
+func (c BaseCollection) Has(...string) bool {
 	panic("not implement")
 }
 
-func (c BaseCollection) Implode() {
+func (c BaseCollection) Implode(string, string) string {
 	panic("not implement")
 }
 
-func (c BaseCollection) Intersect() {
+func (c BaseCollection) Intersect([]string) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) IntersectByKeys() {
+func (c BaseCollection) IntersectByKeys(map[string]interface{}) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) IsEmpty() {
+func (c BaseCollection) IsEmpty() bool {
 	panic("not implement")
 }
 
-func (c BaseCollection) IsNotEmpty() {
+func (c BaseCollection) IsNotEmpty() bool {
 	panic("not implement")
 }
 

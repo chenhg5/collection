@@ -221,3 +221,103 @@ func (c StringArrayCollection) Dd() {
 func (c StringArrayCollection) Dump() {
 	dump(c)
 }
+
+func (c StringArrayCollection) Diff(m interface{}) Collection {
+	ms := m.([]string)
+	var d = make([]string, 0)
+	for _, value := range c.value {
+		exist := false
+		for i := 0; i < len(ms); i++ {
+			if ms[i] == value {
+				exist = true
+				break
+			}
+		}
+		if !exist {
+			d = append(d, value)
+		}
+	}
+	return StringArrayCollection{
+		value: d,
+	}
+}
+
+func (c StringArrayCollection) Each(cb func(item, value interface{}) (interface{}, bool)) Collection {
+	var d = make([]string, 0)
+	var (
+		newValue interface{}
+		stop     = false
+	)
+	for key, value := range c.value {
+		if !stop {
+			newValue, stop = cb(key, value)
+			d = append(d, newValue.(string))
+		} else {
+			d = append(d, value)
+		}
+	}
+	return StringArrayCollection{
+		value: d,
+	}
+}
+
+func (c StringArrayCollection) Every(cb CB) bool {
+	for key, value := range c.value {
+		if !cb(key, value) {
+			return false
+		}
+	}
+	return true
+}
+
+func (c StringArrayCollection) Filter(cb CB) Collection {
+	var d = make([]string, 0)
+	for key, value := range c.value {
+		if cb(key, value) {
+			d = append(d, value)
+		}
+	}
+	return StringArrayCollection{
+		value: d,
+	}
+}
+
+func (c StringArrayCollection) First(cbs ...CB) interface{} {
+	if len(cbs) > 0 {
+		for key, value := range c.value {
+			if cbs[0](key, value) {
+				return value
+			}
+		}
+		return nil
+	} else {
+		if len(c.value) > 0 {
+			return c.value[0]
+		} else {
+			return nil
+		}
+	}
+}
+
+func (c StringArrayCollection) Intersect(keys []string) Collection {
+	var d = make([]string, 0)
+	for _, value := range c.value {
+		for _, v := range keys {
+			if v == value {
+				d = append(d, value)
+				break
+			}
+		}
+	}
+	return StringArrayCollection{
+		value: d,
+	}
+}
+
+func (c StringArrayCollection) IsEmpty() bool {
+	return len(c.value) == 0
+}
+
+func (c StringArrayCollection) IsNotEmpty() bool {
+	return len(c.value) != 0
+}
