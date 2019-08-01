@@ -1,6 +1,9 @@
 package collection
 
-import "github.com/shopspring/decimal"
+import (
+	"encoding/json"
+	"github.com/shopspring/decimal"
+)
 
 type BaseCollection struct {
 	value  interface{}
@@ -127,10 +130,6 @@ func (c BaseCollection) Each(func(item, value interface{}) (interface{}, bool)) 
 	panic("not implement")
 }
 
-func (c BaseCollection) EachSpread() {
-	panic("not implement")
-}
-
 func (c BaseCollection) Every(CB) bool {
 	panic("not implement")
 }
@@ -152,10 +151,6 @@ func (c BaseCollection) FirstWhere(key string, values ...interface{}) map[string
 }
 
 func (c BaseCollection) FlatMap(func(value interface{}) interface{}) Collection {
-	panic("not implement")
-}
-
-func (c BaseCollection) Flatten() Collection {
 	panic("not implement")
 }
 
@@ -203,131 +198,95 @@ func (c BaseCollection) IsNotEmpty() bool {
 	panic("not implement")
 }
 
-func (c BaseCollection) KeyBy() {
+func (c BaseCollection) KeyBy(interface{}) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Keys() {
+func (c BaseCollection) Keys() Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Last() {
+func (c BaseCollection) Last(...CB) interface{} {
 	panic("not implement")
 }
 
-func (c BaseCollection) Macro() {
+func (c BaseCollection) MapToGroups(MapCB) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Make() {
+func (c BaseCollection) MapWithKeys(MapCB) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Map() {
+func (c BaseCollection) Median(key ...string) decimal.Decimal {
 	panic("not implement")
 }
 
-func (c BaseCollection) MapInto() {
+func (c BaseCollection) Merge(interface{}) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) MapSpread() {
+func (c BaseCollection) Nth(...int) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) MapToGroups() {
+func (c BaseCollection) Pad(int, interface{}) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) MapWithKeys() {
+func (c BaseCollection) Partition(PartCB) (Collection, Collection) {
 	panic("not implement")
 }
 
-func (c BaseCollection) Median() {
+func (c BaseCollection) Pop() interface{} {
 	panic("not implement")
 }
 
-func (c BaseCollection) Merge() {
+func (c BaseCollection) Push(interface{}) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Nth() {
+func (c BaseCollection) Random(...int) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Pad() {
+func (c BaseCollection) Reduce(ReduceCB) interface{} {
 	panic("not implement")
 }
 
-func (c BaseCollection) Partition() {
+func (c BaseCollection) Reject(CB) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Pipe() {
+func (c BaseCollection) Reverse() Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Pop() {
+func (c BaseCollection) Search(interface{}) int {
 	panic("not implement")
 }
 
-func (c BaseCollection) Push() {
+func (c BaseCollection) Shift() Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Random() {
+func (c BaseCollection) Shuffle() Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Reduce() {
+func (c BaseCollection) Slice(...int) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Reject() {
+func (c BaseCollection) Sort() Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Reverse() {
+func (c BaseCollection) SortByDesc() Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Search() {
-	panic("not implement")
-}
-
-func (c BaseCollection) Shift() {
-	panic("not implement")
-}
-
-func (c BaseCollection) Shuffle() {
-	panic("not implement")
-}
-
-func (c BaseCollection) Slice() {
-	panic("not implement")
-}
-
-func (c BaseCollection) Some() {
-	panic("not implement")
-}
-
-func (c BaseCollection) Sort() {
-	panic("not implement")
-}
-
-func (c BaseCollection) SortByDesc() {
-	panic("not implement")
-}
-
-func (c BaseCollection) SortKeys() {
-	panic("not implement")
-}
-
-func (c BaseCollection) SortKeysDesc() {
-	panic("not implement")
-}
-
-func (c BaseCollection) Split() {
+func (c BaseCollection) Split(int) Collection {
 	panic("not implement")
 }
 
@@ -335,104 +294,24 @@ func (c BaseCollection) Splice(index ...int) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Tap() {
+func (c BaseCollection) Unique() Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Times() {
+func (c BaseCollection) WhereIn(string, []interface{}) Collection {
 	panic("not implement")
 }
 
-func (c BaseCollection) Transform() {
-	panic("not implement")
-}
-
-func (c BaseCollection) Union() {
-	panic("not implement")
-}
-
-func (c BaseCollection) Unique() {
-	panic("not implement")
-}
-
-func (c BaseCollection) UniqueStrict() {
-	panic("not implement")
-}
-
-func (c BaseCollection) Unless() {
-	panic("not implement")
-}
-
-func (c BaseCollection) UnlessEmpty() {
-	panic("not implement")
-}
-
-func (c BaseCollection) UnlessNotEmpty() {
-	panic("not implement")
-}
-
-func (c BaseCollection) Unwrap() {
-	panic("not implement")
-}
-
-func (c BaseCollection) Values() {
-	panic("not implement")
-}
-
-func (c BaseCollection) When() {
-	panic("not implement")
-}
-
-func (c BaseCollection) WhenEmpty() {
-	panic("not implement")
-}
-
-func (c BaseCollection) WhenNotEmpty() {
-	panic("not implement")
-}
-
-func (c BaseCollection) WhereStrict() {
-	panic("not implement")
-}
-
-func (c BaseCollection) WhereBetween() {
-	panic("not implement")
-}
-
-func (c BaseCollection) WhereIn() {
-	panic("not implement")
-}
-
-func (c BaseCollection) WhereInStrict() {
-	panic("not implement")
-}
-
-func (c BaseCollection) WhereInstanceOf() {
-	panic("not implement")
-}
-
-func (c BaseCollection) WhereNotBetween() {
-	panic("not implement")
-}
-
-func (c BaseCollection) WhereNotIn() {
-	panic("not implement")
-}
-
-func (c BaseCollection) WhereNotInStrict() {
-	panic("not implement")
-}
-
-func (c BaseCollection) Wrap() {
-	panic("not implement")
-}
-
-func (c BaseCollection) Zip() {
+func (c BaseCollection) WhereNotIn(string, []interface{}) Collection {
 	panic("not implement")
 }
 
 func (c BaseCollection) ToJson() string {
-	panic("not implement")
+	s, err := json.Marshal(c.value)
+	if err != nil {
+		panic(err)
+	}
+	return string(s)
 }
 
 func (c BaseCollection) ToNumberArray() []decimal.Decimal {
@@ -451,7 +330,7 @@ func (c BaseCollection) ToMapArray() []map[string]interface{} {
 	panic("not implement")
 }
 
-func (c BaseCollection) Where(key string, value interface{}) Collection {
+func (c BaseCollection) Where(key string, values ...interface{}) Collection {
 	panic("not implement")
 }
 

@@ -2,6 +2,9 @@ package collection
 
 import (
 	"github.com/shopspring/decimal"
+	"math"
+	"math/rand"
+	"time"
 )
 
 type NumberArrayCollection struct {
@@ -306,7 +309,7 @@ func (c NumberArrayCollection) First(cbs ...CB) interface{} {
 }
 
 func (c NumberArrayCollection) ForPage(page, size int) Collection {
-	var d = make([]decimal.Decimal, 0)
+	var d = make([]decimal.Decimal, len(c.value))
 	copy(d, c.value)
 	if size > len(d) || size*(page-1) > len(d) {
 		return NumberArrayCollection{
@@ -330,4 +333,290 @@ func (c NumberArrayCollection) IsEmpty() bool {
 
 func (c NumberArrayCollection) IsNotEmpty() bool {
 	return len(c.value) != 0
+}
+
+func (c NumberArrayCollection) Last(cbs ...CB) interface{} {
+	if len(cbs) > 0 {
+		var last interface{}
+		for key, value := range c.value {
+			if cbs[0](key, value) {
+				last = value
+			}
+		}
+		return last
+	} else {
+		if len(c.value) > 0 {
+			return c.value[len(c.value)-1]
+		} else {
+			return nil
+		}
+	}
+}
+
+func (c NumberArrayCollection) Median(key ...string) decimal.Decimal {
+
+	if len(c.value) < 2 {
+		return c.value[0]
+	}
+
+	var f = make([]decimal.Decimal, len(c.value))
+	copy(f, c.value)
+	qsort(f, true)
+	return f[len(f)/2].Add(f[len(f)/2-1]).Div(nd(2))
+}
+
+func (c NumberArrayCollection) Merge(i interface{}) Collection {
+	m := newDecimalArray(i)
+	var d = make([]decimal.Decimal, len(c.value))
+	copy(d, c.value)
+	d = append(d, m...)
+
+	return NumberArrayCollection{
+		value: d,
+	}
+}
+
+func (c NumberArrayCollection) Pad(num int, value interface{}) Collection {
+	if len(c.value) > num {
+		d := make([]decimal.Decimal, len(c.value))
+		copy(d, c.value)
+		return NumberArrayCollection{
+			value: d,
+		}
+	}
+	if num > 0 {
+		d := make([]decimal.Decimal, num)
+		for i := 0; i < num; i++ {
+			if i < len(c.value) {
+				d[i] = c.value[i]
+			} else {
+				d[i] = nd(value)
+			}
+		}
+		return NumberArrayCollection{
+			value: d,
+		}
+	} else {
+		d := make([]decimal.Decimal, -num)
+		for i := 0; i < -num; i++ {
+			if i < -num-len(c.value) {
+				d[i] = nd(value)
+			} else {
+				d[i] = c.value[i]
+			}
+		}
+		return NumberArrayCollection{
+			value: d,
+		}
+	}
+}
+
+func (c NumberArrayCollection) Partition(cb PartCB) (Collection, Collection) {
+	var d1 = make([]decimal.Decimal, 0)
+	var d2 = make([]decimal.Decimal, 0)
+
+	for i := 0; i < len(c.value); i++ {
+		if cb(i) {
+			d1 = append(d1, c.value[i])
+		} else {
+			d2 = append(d2, c.value[i])
+		}
+	}
+
+	return NumberArrayCollection{
+		value: d1,
+	}, NumberArrayCollection{
+		value: d2,
+	}
+}
+
+func (c NumberArrayCollection) Pop() interface{} {
+	last := c.value[len(c.value)-1]
+	c.value = c.value[:len(c.value)-1]
+	return last
+}
+
+func (c NumberArrayCollection) Push(v interface{}) Collection {
+	var d = make([]decimal.Decimal, len(c.value)+1)
+	for i := 0; i < len(d); i++ {
+		if i < len(c.value) {
+			d[i] = c.value[i]
+		} else {
+			d[i] = nd(v)
+		}
+	}
+
+	return NumberArrayCollection{
+		value: d,
+	}
+}
+
+func (c NumberArrayCollection) Random(num ...int) Collection {
+	if len(num) == 0 {
+		return BaseCollection{
+			value: c.value[rand.Intn(len(c.value))],
+		}
+	} else {
+		if num[0] > len(c.value) {
+			panic("wrong num")
+		}
+		var d = make([]decimal.Decimal, len(c.value))
+		copy(d, c.value)
+		for i := 0; i < len(c.value)-num[0]; i++ {
+			index := rand.Intn(len(d))
+			d = append(d[:index], d[index+1:]...)
+		}
+		return NumberArrayCollection{
+			value: d,
+		}
+	}
+}
+
+func (c NumberArrayCollection) Reduce(cb ReduceCB) interface{} {
+	var res interface{}
+
+	for i := 0; i < len(c.value); i++ {
+		res = cb(res, c.value[i])
+	}
+
+	return res
+}
+
+func (c NumberArrayCollection) Reject(cb CB) Collection {
+	var d = make([]decimal.Decimal, 0)
+	for key, value := range c.value {
+		if !cb(key, value) {
+			d = append(d, value)
+		}
+	}
+	return NumberArrayCollection{
+		value: d,
+	}
+}
+
+func (c NumberArrayCollection) Reverse() Collection {
+	var d = make([]decimal.Decimal, len(c.value))
+	j := 0
+	for i := len(c.value) - 1; i > -1; i-- {
+		d[j] = c.value[i]
+		j++
+	}
+	return NumberArrayCollection{
+		value: d,
+	}
+}
+
+func (c NumberArrayCollection) Search(v interface{}) int {
+	if cb, ok := v.(CB); ok {
+		for i := 0; i < len(c.value); i++ {
+			if cb(i, c.value[i]) {
+				return i
+			}
+		}
+	} else {
+		n := nd(v)
+		for i := 0; i < len(c.value); i++ {
+			if n == c.value[i] {
+				return i
+			}
+		}
+	}
+	return -1
+}
+
+func (c NumberArrayCollection) Shift() Collection {
+	var d = make([]decimal.Decimal, len(c.value))
+	copy(d, c.value)
+	d = d[1:]
+	return NumberArrayCollection{
+		value: d,
+	}
+}
+
+func (c NumberArrayCollection) Shuffle() Collection {
+	var d = make([]decimal.Decimal, len(c.value))
+	copy(d, c.value)
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(c.value), func(i, j int) { d[i], d[j] = d[j], d[i] })
+	return NumberArrayCollection{
+		value: d,
+	}
+}
+
+func (c NumberArrayCollection) Slice(keys ...int) Collection {
+	var d = make([]decimal.Decimal, len(c.value))
+	copy(d, c.value)
+	if len(keys) == 1 {
+		return NumberArrayCollection{
+			value: d[keys[0]:],
+		}
+	} else {
+		return NumberArrayCollection{
+			value: d[keys[0] : keys[0]+keys[1]],
+		}
+	}
+}
+
+func (c NumberArrayCollection) Sort() Collection {
+	var d = make([]decimal.Decimal, len(c.value))
+	copy(d, c.value)
+	qsort(d, true)
+	return NumberArrayCollection{
+		value: d,
+	}
+}
+
+func (c NumberArrayCollection) SortByDesc() Collection {
+	var d = make([]decimal.Decimal, len(c.value))
+	copy(d, c.value)
+	qsort(d, false)
+	return NumberArrayCollection{
+		value: d,
+	}
+}
+
+func (c NumberArrayCollection) Split(num int) Collection {
+	var d = make([][]interface{}, math.Ceil(float64(len(c.value))/float64(num)))
+
+	j := 0
+	for i := 0; i < len(c.value); i++ {
+		if i%num == 0 {
+			if i+num <= len(c.value) {
+				d[j] = make([]interface{}, num)
+			} else {
+				d[j] = make([]interface{}, len(c.value)-i)
+			}
+			d[j][i%num] = c.value[i]
+			j++
+		} else {
+			d[j][i%num] = c.value[i]
+		}
+	}
+
+	return MultiDimensionalArrayCollection{
+		value: d,
+	}
+}
+
+func (c NumberArrayCollection) Unique() Collection {
+	var d = make([]decimal.Decimal, len(c.value))
+	copy(d, c.value)
+	x := make([]decimal.Decimal, 0)
+	for _, i := range d {
+		if len(x) == 0 {
+			x = append(x, i)
+		} else {
+			for k, v := range x {
+				if i == v {
+					break
+				}
+				if k == len(x)-1 {
+					x = append(x, i)
+				}
+			}
+		}
+	}
+	return NumberArrayCollection{
+		value: x,
+	}
 }

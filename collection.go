@@ -139,339 +139,249 @@ func Collect(src interface{}) Collection {
 type Collection interface {
 	Value() interface{}
 
-	// reference: https://laravel.com/docs/5.8/collections#method-all
+	// All returns the underlying array represented by the collection.
 	All() []interface{}
 
-	// reference: https://laravel.com/docs/5.8/collections#method-avg
+	// Avg returns the average value of a given key.
 	Avg(key ...string) decimal.Decimal
 
-	// reference: https://laravel.com/docs/5.8/collections#method-sum
+	// Sum returns the sum of all items in the collection.
 	Sum(key ...string) decimal.Decimal
 
-	// reference: https://laravel.com/docs/5.8/collections#method-min
+	// Min returns the minimum value of a given key.
 	Min(key ...string) decimal.Decimal
 
-	// reference: https://laravel.com/docs/5.8/collections#method-max
+	// Max returns the maximum value of a given key.
 	Max(key ...string) decimal.Decimal
 
-	// reference: https://laravel.com/docs/5.8/collections#method-join
+	// Join joins the collection's values with a string.
 	Join(delimiter string) string
 
-	// reference: https://laravel.com/docs/5.8/collections#method-combine
+	// Combine combines the values of the collection, as keys, with the values of another array or collection.
 	Combine(value []interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-count
+	// Count returns the total number of items in the collection.
 	Count() int
 
-	// reference: https://laravel.com/docs/5.8/collections#method-pluck
+	// Pluck retrieves all of the values for a given key.
 	Pluck(key string) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-mode
+	// Mode returns the mode value of a given key.
 	Mode(key ...string) []interface{}
 
-	// reference: https://laravel.com/docs/5.8/collections#method-only
+	// Only returns the items in the collection with the specified keys.
 	Only(keys []string) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-prepend
+	// Prepend adds an item to the beginning of the collection.
 	Prepend(values ...interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-pull
+	// Pull removes and returns an item from the collection by its key.
 	Pull(key interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-put
+	// Put sets the given key and value in the collection:.
 	Put(key string, value interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-sortby
+	// SortBy sorts the collection by the given key.
 	SortBy(key string) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-take
+	// Take returns a new collection with the specified number of items.
 	Take(num int) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-average
+	// Average returns the average value of a given key.
 	Average()
 
-	// reference: https://laravel.com/docs/5.8/collections#method-chunk
+	// Chunk breaks the collection into multiple, smaller collections of a given size.
 	Chunk(num int) MultiDimensionalArrayCollection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-collapse
+	// Collapse collapses a collection of arrays into a single, flat collection.
 	Collapse() Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-concat
+	// Concat appends the given array or collection values onto the end of the collection.
 	Concat(value interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-contains
+	// Contains determines whether the collection contains a given item.
 	Contains(value interface{}, callback ...interface{}) bool
 
-	// reference: https://laravel.com/docs/5.8/collections#method-containsStrict
+	// ContainsStrict has the same signature as the contains method; however, all values are compared using "strict" comparisons.
 	ContainsStrict(value interface{}, callback ...interface{}) bool
 
-	// reference: https://laravel.com/docs/5.8/collections#method-countBy
+	// CountBy counts the occurrences of values in the collection. By default, the method counts the occurrences of every element.
 	CountBy(callback ...interface{}) map[interface{}]int
 
-	// reference: https://laravel.com/docs/5.8/collections#method-crossJoin
+	// CrossJoin cross joins the collection's values among the given arrays or collections, returning a Cartesian product with all possible permutations.
 	CrossJoin(array ...[]interface{}) MultiDimensionalArrayCollection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-dd
+	// Dd dumps the collection's items and ends execution of the script.
 	Dd()
 
-	// reference: https://laravel.com/docs/5.8/collections#method-diff
+	// Diff compares the collection against another collection or a plain PHP array based on its values.
+	// This method will return the values in the original collection that are not present in the given collection.
 	Diff(interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-diffassoc
+	// DiffAssoc compares the collection against another collection or a plain PHP  array based on its keys and values.
+	// This method will return the key / value pairs in the original collection that are not present in the given collection.
 	DiffAssoc(map[string]interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-diffkeys
+	// DiffKeys compares the collection against another collection or a plain PHP array based on its keys.
+	// This method will return the key / value pairs in the original collection that are not present in the given collection.
 	DiffKeys(map[string]interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-dump
+	// Dump dumps the collection's items.
 	Dump()
 
-	// reference: https://laravel.com/docs/5.8/collections#method-duplicates
-
-	// reference: https://laravel.com/docs/5.8/collections#method-each
+	// Each iterates over the items in the collection and passes each item to a callback.
 	Each(func(item, value interface{}) (interface{}, bool)) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-eachSpread
-	EachSpread()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-every
+	// Every may be used to verify that all elements of a collection pass a given truth test.
 	Every(CB) bool
 
-	// reference: https://laravel.com/docs/5.8/collections#method-except
+	// Except returns all items in the collection except for those with the specified keys.
 	Except([]string) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-filter
+	// Filter filters the collection using the given callback, keeping only those items that pass a given truth test.
 	Filter(CB) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-first
+	// First returns the first element in the collection that passes a given truth test.
 	First(...CB) interface{}
 
-	// reference: https://laravel.com/docs/5.8/collections#method-firstWhere
+	// FirstWhere returns the first element in the collection with the given key / value pair.
 	FirstWhere(key string, values ...interface{}) map[string]interface{}
 
-	// reference: https://laravel.com/docs/5.8/collections#method-flatMap
+	// FlatMap iterates through the collection and passes each value to the given callback.
 	FlatMap(func(value interface{}) interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-flatten
-	Flatten() Collection
-
-	// reference: https://laravel.com/docs/5.8/collections#method-flip
+	// Flip swaps the collection's keys with their corresponding values.
 	Flip() Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-forget
+	// Forget removes an item from the collection by its key.
 	Forget(string) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-forPage
+	// ForPage returns a new collection containing the items that would be present on a given page number.
 	ForPage(int, int) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-get
+	// Get returns the item at a given key. If the key does not exist, null is returned.
 	Get(string, ...interface{}) interface{}
 
-	// reference: https://laravel.com/docs/5.8/collections#method-groupBy
+	// GroupBy groups the collection's items by a given key.
 	GroupBy(string) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-has
+	// Has determines if a given key exists in the collection.
 	Has(...string) bool
 
-	// reference: https://laravel.com/docs/5.8/collections#method-implode
+	// Implode joins the items in a collection. Its arguments depend on the type of items in the collection.
 	Implode(string, string) string
 
-	// reference: https://laravel.com/docs/5.8/collections#method-intersect
+	// Intersect removes any values from the original collection that are not present in the given array or collection.
 	Intersect([]string) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-intersectByKeys
+	// IntersectByKeys removes any keys from the original collection that are not present in the given array or collection.
 	IntersectByKeys(map[string]interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-isEmpty
+	// IsEmpty returns true if the collection is empty; otherwise, false is returned.
 	IsEmpty() bool
 
-	// reference: https://laravel.com/docs/5.8/collections#method-isNotEmpty
+	// IsNotEmpty returns true if the collection is not empty; otherwise, false is returned.
 	IsNotEmpty() bool
 
-	// reference: https://laravel.com/docs/5.8/collections#method-join
+	// KeyBy keys the collection by the given key. If multiple items have the same key, only the last one will
+	// appear in the new collection.
+	KeyBy(interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-keyBy
-	KeyBy()
+	// Keys returns all of the collection's keys.
+	Keys() Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-keys
-	Keys()
+	// Last returns the last element in the collection that passes a given truth test.
+	Last(...CB) interface{}
 
-	// reference: https://laravel.com/docs/5.8/collections#method-last
-	Last()
+	// MapToGroups groups the collection's items by the given callback.
+	MapToGroups(MapCB) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-macro
-	Macro()
+	// MapWithKeys iterates through the collection and passes each value to the given callback.
+	MapWithKeys(MapCB) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-make
-	Make()
+	// Median returns the median value of a given key.
+	Median(...string) decimal.Decimal
 
-	// reference: https://laravel.com/docs/5.8/collections#method-map
-	Map()
+	// Merge merges the given array or collection with the original collection. If a string key in the given items
+	// matches a string key in the original collection, the given items's value will overwrite the value in the
+	// original collection.
+	Merge(interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-mapInto
-	MapInto()
+	// Pad will fill the array with the given value until the array reaches the specified size.
+	Pad(int, interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-mapSpread
-	MapSpread()
+	// Partition separate elements that pass a given truth test from those that do not.
+	Partition(PartCB) (Collection, Collection)
 
-	// reference: https://laravel.com/docs/5.8/collections#method-mapToGroups
-	MapToGroups()
+	// Pop removes and returns the last item from the collection.
+	Pop() interface{}
 
-	// reference: https://laravel.com/docs/5.8/collections#method-mapWithKeys
-	MapWithKeys()
+	// Push appends an item to the end of the collection.
+	Push(interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-median
-	Median()
+	// Random returns a random item from the collection.
+	Random(...int) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-merge
-	Merge()
+	// Reduce reduces the collection to a single value, passing the result of each iteration into the subsequent iteration.
+	Reduce(ReduceCB) interface{}
 
-	// reference: https://laravel.com/docs/5.8/collections#method-nth
-	Nth()
+	// Reject filters the collection using the given callback.
+	Reject(CB) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-pad
-	Pad()
+	// Reverse reverses the order of the collection's items, preserving the original keys.
+	Reverse() Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-partition
-	Partition()
+	// Search searches the collection for the given value and returns its key if found. If the item is not found,
+	// -1 is returned.
+	Search(interface{}) int
 
-	// reference: https://laravel.com/docs/5.8/collections#method-pipe
-	Pipe()
+	// Shift removes and returns the first item from the collection.
+	Shift() Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-pop
-	Pop()
+	// Shuffle randomly shuffles the items in the collection.
+	Shuffle() Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-push
-	Push()
+	// Slice returns a slice of the collection starting at the given index.
+	Slice(...int) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-random
-	Random()
+	// Sort sorts the collection.
+	Sort() Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-reduce
-	Reduce()
+	// SortByDesc has the same signature as the sortBy method, but will sort the collection in the opposite order.
+	SortByDesc() Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-reject
-	Reject()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-reverse
-	Reverse()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-search
-	Search()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-shift
-	Shift()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-shuffle
-	Shuffle()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-slice
-	Slice()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-some
-	Some()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-sort
-	Sort()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-sortByDesc
-	SortByDesc()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-sortKeys
-	SortKeys()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-sortKeysDesc
-	SortKeysDesc()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-splice
+	// Splice removes and returns a slice of items starting at the specified index.
 	Splice(index ...int) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-split
-	Split()
+	// Split breaks a collection into the given number of groups.
+	Split(int) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-tap
-	Tap()
+	// Unique returns all of the unique items in the collection.
+	Unique() Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-times
-	Times()
+	// WhereIn filters the collection by a given key / value contained within the given array.
+	WhereIn(string, []interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-transform
-	Transform()
+	// WhereNotIn filters the collection by a given key / value not contained within the given array.
+	WhereNotIn(string, []interface{}) Collection
 
-	// reference: https://laravel.com/docs/5.8/collections#method-union
-	Union()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-unique
-	Unique()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-uniqueStrict
-	UniqueStrict()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-unless
-	Unless()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-unlessEmpty
-	UnlessEmpty()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-unlessNotEmpty
-	UnlessNotEmpty()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-unwrap
-	Unwrap()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-values
-	Values()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-when
-	When()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-whenEmpty
-	WhenEmpty()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-whenNotEmpty
-	WhenNotEmpty()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-whereStrict
-	WhereStrict()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-whereBetween
-	WhereBetween()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-whereIn
-	WhereIn()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-whereInStrict
-	WhereInStrict()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-whereInstanceOf
-	WhereInstanceOf()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-whereNotBetween
-	WhereNotBetween()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-whereNotIn
-	WhereNotIn()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-whereNotInStrict
-	WhereNotInStrict()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-wrap
-	Wrap()
-
-	// reference: https://laravel.com/docs/5.8/collections#method-zip
-	Zip()
-
+	// ToJson converts the collection into a json string.
 	ToJson() string
 
+	// ToNumberArray converts the collection into a plain golang slice which contains decimal.Decimal.
 	ToNumberArray() []decimal.Decimal
 
+	// ToStringArray converts the collection into a plain golang slice which contains string.
 	ToStringArray() []string
 
+	// ToMap converts the collection into a plain golang map.
 	ToMap() map[string]interface{}
 
+	// ToMapArray converts the collection into a plain golang slice which contains map.
 	ToMapArray() []map[string]interface{}
 
-	Where(key string, value interface{}) Collection
+	// Where filters the collection by a given key / value pair.
+	Where(key string, values ...interface{}) Collection
 }
 
 func newDecimalFromInterface(a interface{}) decimal.Decimal {
@@ -549,6 +459,10 @@ func nd(a interface{}) decimal.Decimal {
 }
 
 type CB func(item, value interface{}) bool
+type FilterFun func(value interface{}) interface{}
+type MapCB func(map[string]interface{}) (string, interface{})
+type PartCB func(int) bool
+type ReduceCB func(interface{}, interface{}) interface{}
 
 func copyMap(m map[string]interface{}) map[string]interface{} {
 	var buf bytes.Buffer
@@ -620,5 +534,36 @@ func newDecimalArray(src interface{}) []decimal.Decimal {
 		return f
 	default:
 		return nil
+	}
+}
+
+func qsort(arr []decimal.Decimal, order bool) []decimal.Decimal {
+	if len(arr) < 2 {
+		return arr
+	} else {
+		pivot := arr[0]
+		var less []decimal.Decimal
+		var greater []decimal.Decimal
+		for _, value := range arr[1:] {
+			if order {
+				if value.LessThanOrEqual(pivot) {
+					less = append(less, value)
+				} else {
+					greater = append(greater, value)
+				}
+			} else {
+				if value.LessThanOrEqual(pivot) {
+					greater = append(greater, value)
+				} else {
+					less = append(less, value)
+				}
+			}
+		}
+
+		var result []decimal.Decimal
+		result = append(result, qsort(less, order)...)
+		result = append(result, pivot)
+		result = append(result, qsort(greater, order)...)
+		return result
 	}
 }

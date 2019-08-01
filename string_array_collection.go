@@ -2,6 +2,9 @@ package collection
 
 import (
 	"fmt"
+	"math"
+	"math/rand"
+	"time"
 )
 
 type StringArrayCollection struct {
@@ -320,4 +323,271 @@ func (c StringArrayCollection) IsEmpty() bool {
 
 func (c StringArrayCollection) IsNotEmpty() bool {
 	return len(c.value) != 0
+}
+
+func (c StringArrayCollection) Last(cbs ...CB) interface{} {
+	if len(cbs) > 0 {
+		var last interface{}
+		for key, value := range c.value {
+			if cbs[0](key, value) {
+				last = value
+			}
+		}
+		return last
+	} else {
+		if len(c.value) > 0 {
+			return c.value[len(c.value)-1]
+		} else {
+			return nil
+		}
+	}
+}
+
+func (c StringArrayCollection) Merge(i interface{}) Collection {
+	m := i.([]string)
+	var d = make([]string, len(c.value))
+	copy(d, c.value)
+
+	for i := 0; i < len(m); i++ {
+		exist := false
+		for j := 0; j < len(d); j++ {
+			if d[j] == m[i] {
+				exist = true
+				break
+			}
+		}
+		if !exist {
+			d = append(d, m[i])
+		}
+	}
+
+	return StringArrayCollection{
+		value: d,
+	}
+}
+
+func (c StringArrayCollection) Pad(num int, value interface{}) Collection {
+	if len(c.value) > num {
+		d := make([]string, len(c.value))
+		copy(d, c.value)
+		return StringArrayCollection{
+			value: d,
+		}
+	}
+	if num > 0 {
+		d := make([]string, num)
+		for i := 0; i < num; i++ {
+			if i < len(c.value) {
+				d[i] = c.value[i]
+			} else {
+				d[i] = value.(string)
+			}
+		}
+		return StringArrayCollection{
+			value: d,
+		}
+	} else {
+		d := make([]string, -num)
+		for i := 0; i < -num; i++ {
+			if i < -num-len(c.value) {
+				d[i] = value.(string)
+			} else {
+				d[i] = c.value[i]
+			}
+		}
+		return StringArrayCollection{
+			value: d,
+		}
+	}
+}
+
+func (c StringArrayCollection) Partition(cb PartCB) (Collection, Collection) {
+	var d1 = make([]string, 0)
+	var d2 = make([]string, 0)
+
+	for i := 0; i < len(c.value); i++ {
+		if cb(i) {
+			d1 = append(d1, c.value[i])
+		} else {
+			d2 = append(d2, c.value[i])
+		}
+	}
+
+	return StringArrayCollection{
+		value: d1,
+	}, StringArrayCollection{
+		value: d2,
+	}
+}
+
+func (c StringArrayCollection) Pop() interface{} {
+	last := c.value[len(c.value)-1]
+	c.value = c.value[:len(c.value)-1]
+	return last
+}
+
+func (c StringArrayCollection) Push(v interface{}) Collection {
+	var d = make([]string, len(c.value)+1)
+	for i := 0; i < len(d); i++ {
+		if i < len(c.value) {
+			d[i] = c.value[i]
+		} else {
+			d[i] = v.(string)
+		}
+	}
+
+	return StringArrayCollection{
+		value: d,
+	}
+}
+
+func (c StringArrayCollection) Random(num ...int) Collection {
+	if len(num) == 0 {
+		return BaseCollection{
+			value: c.value[rand.Intn(len(c.value))],
+		}
+	} else {
+		if num[0] > len(c.value) {
+			panic("wrong num")
+		}
+		var d = make([]string, len(c.value))
+		copy(d, c.value)
+		for i := 0; i < len(c.value)-num[0]; i++ {
+			index := rand.Intn(len(d))
+			d = append(d[:index], d[index+1:]...)
+		}
+		return StringArrayCollection{
+			value: d,
+		}
+	}
+}
+
+func (c StringArrayCollection) Reduce(cb ReduceCB) interface{} {
+	var res interface{}
+
+	for i := 0; i < len(c.value); i++ {
+		res = cb(res, c.value[i])
+	}
+
+	return res
+}
+
+func (c StringArrayCollection) Reject(cb CB) Collection {
+	var d = make([]string, 0)
+	for key, value := range c.value {
+		if !cb(key, value) {
+			d = append(d, value)
+		}
+	}
+	return StringArrayCollection{
+		value: d,
+	}
+}
+
+func (c StringArrayCollection) Reverse() Collection {
+	var d = make([]string, len(c.value))
+	j := 0
+	for i := len(c.value) - 1; i > -1; i-- {
+		d[j] = c.value[i]
+		j++
+	}
+	return StringArrayCollection{
+		value: d,
+	}
+}
+
+func (c StringArrayCollection) Search(v interface{}) int {
+	if s, ok := v.(string); ok {
+		for i := 0; i < len(c.value); i++ {
+			if s == c.value[i] {
+				return i
+			}
+		}
+	} else {
+		cb := v.(CB)
+		for i := 0; i < len(c.value); i++ {
+			if cb(i, c.value[i]) {
+				return i
+			}
+		}
+	}
+	return -1
+}
+
+func (c StringArrayCollection) Shift() Collection {
+	var d = make([]string, len(c.value))
+	copy(d, c.value)
+	return StringArrayCollection{
+		value: d[1:],
+	}
+}
+
+func (c StringArrayCollection) Shuffle() Collection {
+	var d = make([]string, len(c.value))
+	copy(d, c.value)
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(c.value), func(i, j int) { d[i], d[j] = d[j], d[i] })
+	return StringArrayCollection{
+		value: d,
+	}
+}
+
+func (c StringArrayCollection) Slice(keys ...int) Collection {
+	var d = make([]string, len(c.value))
+	copy(d, c.value)
+	if len(keys) == 1 {
+		return StringArrayCollection{
+			value: d[keys[0]:],
+		}
+	} else {
+		return StringArrayCollection{
+			value: d[keys[0] : keys[0]+keys[1]],
+		}
+	}
+}
+
+func (c StringArrayCollection) Split(num int) Collection {
+	var d = make([][]interface{}, math.Ceil(float64(len(c.value))/float64(num)))
+
+	j := 0
+	for i := 0; i < len(c.value); i++ {
+		if i%num == 0 {
+			if i+num <= len(c.value) {
+				d[j] = make([]interface{}, num)
+			} else {
+				d[j] = make([]interface{}, len(c.value)-i)
+			}
+			d[j][i%num] = c.value[i]
+			j++
+		} else {
+			d[j][i%num] = c.value[i]
+		}
+	}
+
+	return MultiDimensionalArrayCollection{
+		value: d,
+	}
+}
+
+func (c StringArrayCollection) Unique() Collection {
+	var d = make([]string, len(c.value))
+	copy(d, c.value)
+	x := make([]string, 0)
+	for _, i := range d {
+		if len(x) == 0 {
+			x = append(x, i)
+		} else {
+			for k, v := range x {
+				if i == v {
+					break
+				}
+				if k == len(x)-1 {
+					x = append(x, i)
+				}
+			}
+		}
+	}
+	return StringArrayCollection{
+		value: x,
+	}
 }

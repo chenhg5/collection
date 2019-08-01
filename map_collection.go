@@ -218,3 +218,26 @@ func (c MapCollection) IsEmpty() bool {
 func (c MapCollection) IsNotEmpty() bool {
 	return len(c.value) != 0
 }
+
+func (c MapCollection) Keys() Collection {
+	var d = make([]string, 0)
+	for key := range c.value {
+		d = append(d, key)
+	}
+	return StringArrayCollection{
+		value: d,
+	}
+}
+
+func (c MapCollection) Merge(i interface{}) Collection {
+	m := i.(map[string]interface{})
+	var d = copyMap(c.value)
+
+	for key, value := range m {
+		d[key] = value
+	}
+
+	return MapCollection{
+		value: d,
+	}
+}

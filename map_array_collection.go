@@ -3,7 +3,10 @@ package collection
 import (
 	"fmt"
 	"github.com/shopspring/decimal"
+	"math"
+	"math/rand"
 	"strconv"
+	"time"
 )
 
 type MapArrayCollection struct {
@@ -19,10 +22,19 @@ func (c MapArrayCollection) Sum(key ...string) decimal.Decimal {
 	var sum = decimal.New(0, 0)
 
 	for i := 0; i < len(c.value); i++ {
-		sum = sum.Add(newDecimalFromInterface(c.value[i][key[0]]))
+		sum = sum.Add(nd(c.value[i][key[0]]))
 	}
 
 	return sum
+}
+
+func (c MapArrayCollection) Median(key ...string) decimal.Decimal {
+	var f = make([]decimal.Decimal, len(c.value))
+	for i := 0; i < len(c.value); i++ {
+		f = append(f, nd(c.value[i][key[0]]))
+	}
+	qsort(f, true)
+	return f[len(f)/2].Add(f[len(f)/2-1]).Div(nd(2))
 }
 
 func (c MapArrayCollection) Min(key ...string) decimal.Decimal {
@@ -33,7 +45,7 @@ func (c MapArrayCollection) Min(key ...string) decimal.Decimal {
 	)
 
 	for i := 0; i < len(c.value); i++ {
-		number = newDecimalFromInterface(c.value[i][key[0]])
+		number = nd(c.value[i][key[0]])
 		if i == 0 {
 			smallest = number
 			continue
@@ -54,7 +66,7 @@ func (c MapArrayCollection) Max(key ...string) decimal.Decimal {
 	)
 
 	for i := 0; i < len(c.value); i++ {
-		number = newDecimalFromInterface(c.value[i][key[0]])
+		number = nd(c.value[i][key[0]])
 		if i == 0 {
 			biggest = number
 			continue
@@ -266,7 +278,7 @@ func containsValue(m interface{}, value interface{}) bool {
 		return false
 	case []decimal.Decimal:
 		for _, v := range m.([]decimal.Decimal) {
-			if v.Equal(newDecimalFromInterface(value)) {
+			if v.Equal(nd(value)) {
 				return true
 			}
 		}
@@ -414,25 +426,25 @@ func (c MapArrayCollection) FirstWhere(key string, values ...interface{}) map[st
 		switch values[0].(string) {
 		case ">":
 			for _, value := range c.value {
-				if newDecimalFromInterface(value[key]).GreaterThan(newDecimalFromInterface(values[0])) {
+				if nd(value[key]).GreaterThan(nd(values[0])) {
 					return value
 				}
 			}
 		case ">=":
 			for _, value := range c.value {
-				if newDecimalFromInterface(value[key]).GreaterThanOrEqual(newDecimalFromInterface(values[0])) {
+				if nd(value[key]).GreaterThanOrEqual(nd(values[0])) {
 					return value
 				}
 			}
 		case "<":
 			for _, value := range c.value {
-				if newDecimalFromInterface(value[key]).LessThan(newDecimalFromInterface(values[0])) {
+				if nd(value[key]).LessThan(nd(values[0])) {
 					return value
 				}
 			}
 		case "<=":
 			for _, value := range c.value {
-				if newDecimalFromInterface(value[key]).LessThanOrEqual(newDecimalFromInterface(values[0])) {
+				if nd(value[key]).LessThanOrEqual(nd(values[0])) {
 					return value
 				}
 			}
@@ -486,4 +498,323 @@ func (c MapArrayCollection) IsEmpty() bool {
 
 func (c MapArrayCollection) IsNotEmpty() bool {
 	return len(c.value) != 0
+}
+
+func (c MapArrayCollection) KeyBy(v interface{}) Collection {
+	var d = make(map[string]interface{}, 0)
+	if k, ok := v.(string); ok {
+		for _, value := range c.value {
+			for kk, vv := range value {
+				if kk == k {
+					d[fmt.Sprintf("%v", vv)] = []map[string]interface{}{value}
+				}
+			}
+		}
+	} else {
+		vb := v.(FilterFun)
+		for _, value := range c.value {
+			for kk, vv := range value {
+				if kk == k {
+					d[fmt.Sprintf("%v", vb(vv))] = []map[string]interface{}{value}
+				}
+			}
+		}
+	}
+	return MapCollection{
+		value: d,
+	}
+}
+
+func (c MapArrayCollection) Last(cbs ...CB) interface{} {
+	if len(cbs) > 0 {
+		var last interface{}
+		for key, value := range c.value {
+			if cbs[0](key, value) {
+				last = value
+			}
+		}
+		return last
+	} else {
+		if len(c.value) > 0 {
+			return c.value[len(c.value)-1]
+		} else {
+			return nil
+		}
+	}
+}
+
+func (c MapArrayCollection) MapToGroups(cb MapCB) Collection {
+	var d = make(map[string]interface{}, 0)
+	for _, value := range c.value {
+		nk, nv := cb(value)
+		if _, ok := d[nk]; ok {
+			am := d[nk].([]interface{})
+			am = append(am, nv)
+			d[nk] = am
+		} else {
+			d[nk] = []interface{}{nv}
+		}
+	}
+	return MapCollection{
+		value: d,
+	}
+}
+
+func (c MapArrayCollection) MapWithKeys(cb MapCB) Collection {
+	var d = make(map[string]interface{}, 0)
+	for _, value := range c.value {
+		nk, nv := cb(value)
+		d[nk] = nv
+	}
+	return MapCollection{
+		value: d,
+	}
+}
+
+func (c MapArrayCollection) Partition(cb PartCB) (Collection, Collection) {
+	var d1 = make([]map[string]interface{}, 0)
+	var d2 = make([]map[string]interface{}, 0)
+
+	for i := 0; i < len(c.value); i++ {
+		if cb(i) {
+			d1 = append(d1, c.value[i])
+		} else {
+			d2 = append(d2, c.value[i])
+		}
+	}
+
+	return MapArrayCollection{
+		value: d1,
+	}, MapArrayCollection{
+		value: d2,
+	}
+}
+
+func (c MapArrayCollection) Pop() interface{} {
+	last := c.value[len(c.value)-1]
+	c.value = c.value[:len(c.value)-1]
+	return last
+}
+
+func (c MapArrayCollection) Push(v interface{}) Collection {
+	var d = make([]map[string]interface{}, len(c.value)+1)
+	for i := 0; i < len(d); i++ {
+		if i < len(c.value) {
+			d[i] = c.value[i]
+		} else {
+			d[i] = v.(map[string]interface{})
+		}
+	}
+
+	return MapArrayCollection{
+		value: d,
+	}
+}
+
+func (c MapArrayCollection) Random(num ...int) Collection {
+	if len(num) == 0 {
+		return BaseCollection{
+			value: c.value[rand.Intn(len(c.value))],
+		}
+	} else {
+		if num[0] > len(c.value) {
+			panic("wrong num")
+		}
+		var d = make([]map[string]interface{}, len(c.value))
+		copy(d, c.value)
+		for i := 0; i < len(c.value)-num[0]; i++ {
+			index := rand.Intn(len(d))
+			d = append(d[:index], d[index+1:]...)
+		}
+		return MapArrayCollection{
+			value: d,
+		}
+	}
+}
+
+func (c MapArrayCollection) Reduce(cb ReduceCB) interface{} {
+	var res interface{}
+
+	for i := 0; i < len(c.value); i++ {
+		res = cb(res, c.value[i])
+	}
+
+	return res
+}
+
+func (c MapArrayCollection) Reject(cb CB) Collection {
+	var d = make([]map[string]interface{}, 0)
+	for key, value := range c.value {
+		if !cb(key, value) {
+			d = append(d, value)
+		}
+	}
+	return MapArrayCollection{
+		value: d,
+	}
+}
+
+func (c MapArrayCollection) Reverse() Collection {
+	var d = make([]map[string]interface{}, len(c.value))
+	j := 0
+	for i := len(c.value) - 1; i > -1; i-- {
+		d[j] = c.value[i]
+		j++
+	}
+	return MapArrayCollection{
+		value: d,
+	}
+}
+
+func (c MapArrayCollection) Search(v interface{}) int {
+	cb := v.(CB)
+	for i := 0; i < len(c.value); i++ {
+		if cb(i, c.value[i]) {
+			return i
+		}
+	}
+	return -1
+}
+
+func (c MapArrayCollection) Shift() Collection {
+	var d = make([]map[string]interface{}, len(c.value))
+	copy(d, c.value)
+	d = d[1:]
+	return MapArrayCollection{
+		value: d,
+	}
+}
+
+func (c MapArrayCollection) Shuffle() Collection {
+	var d = make([]map[string]interface{}, len(c.value))
+	copy(d, c.value)
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(c.value), func(i, j int) { d[i], d[j] = d[j], d[i] })
+	return MapArrayCollection{
+		value: d,
+	}
+}
+
+func (c MapArrayCollection) Slice(keys ...int) Collection {
+	var d = make([]map[string]interface{}, len(c.value))
+	copy(d, c.value)
+	if len(keys) == 1 {
+		return MapArrayCollection{
+			value: d[keys[0]:],
+		}
+	} else {
+		return MapArrayCollection{
+			value: d[keys[0] : keys[0]+keys[1]],
+		}
+	}
+}
+
+func (c MapArrayCollection) Split(num int) Collection {
+	var d = make([][]interface{}, math.Ceil(float64(len(c.value))/float64(num)))
+
+	j := 0
+	for i := 0; i < len(c.value); i++ {
+		if i%num == 0 {
+			if i+num <= len(c.value) {
+				d[j] = make([]interface{}, num)
+			} else {
+				d[j] = make([]interface{}, len(c.value)-i)
+			}
+			d[j][i%num] = c.value[i]
+			j++
+		} else {
+			d[j][i%num] = c.value[i]
+		}
+	}
+
+	return MultiDimensionalArrayCollection{
+		value: d,
+	}
+}
+
+func (c MapArrayCollection) WhereIn(key string, in []interface{}) Collection {
+	var d = make([]map[string]interface{}, 0)
+	for i := 0; i < len(c.value); i++ {
+		for j := 0; j < len(in); j++ {
+			if c.value[i][key] == in[j] {
+				d = append(d, copyMap(c.value[i]))
+				break
+			}
+		}
+	}
+	return MapArrayCollection{
+		value: d,
+	}
+}
+
+func (c MapArrayCollection) WhereNotIn(key string, in []interface{}) Collection {
+	var d = make([]map[string]interface{}, 0)
+	for i := 0; i < len(c.value); i++ {
+		for j := 0; j < len(in); j++ {
+			isIn := false
+			if c.value[i][key] == in[j] {
+				isIn = true
+				break
+			}
+			if !isIn {
+				d = append(d, copyMap(c.value[i]))
+			}
+		}
+	}
+	return MapArrayCollection{
+		value: d,
+	}
+}
+
+func (c MapArrayCollection) Where(key string, values ...interface{}) Collection {
+	var d = make([]map[string]interface{}, 0)
+	if len(values) < 1 {
+		for _, value := range c.value {
+			if isTrue(value[key]) {
+				d = append(d, copyMap(value))
+			}
+		}
+	} else if len(values) < 2 {
+		for _, value := range c.value {
+			if value[key] == values[0] {
+				d = append(d, copyMap(value))
+			}
+		}
+	} else {
+		switch values[0].(string) {
+		case ">":
+			for _, value := range c.value {
+				if nd(value[key]).GreaterThan(nd(values[0])) {
+					d = append(d, copyMap(value))
+				}
+			}
+		case ">=":
+			for _, value := range c.value {
+				if nd(value[key]).GreaterThanOrEqual(nd(values[0])) {
+					d = append(d, copyMap(value))
+				}
+			}
+		case "<":
+			for _, value := range c.value {
+				if nd(value[key]).LessThan(nd(values[0])) {
+					d = append(d, copyMap(value))
+				}
+			}
+		case "<=":
+			for _, value := range c.value {
+				if nd(value[key]).LessThanOrEqual(nd(values[0])) {
+					d = append(d, copyMap(value))
+				}
+			}
+		case "=":
+			for _, value := range c.value {
+				if value[key] == values[0] {
+					d = append(d, copyMap(value))
+				}
+			}
+		}
+	}
+	return MapArrayCollection{
+		value: d,
+	}
 }
