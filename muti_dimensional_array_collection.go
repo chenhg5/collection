@@ -5,6 +5,7 @@ type MultiDimensionalArrayCollection struct {
 	BaseCollection
 }
 
+// Collapse collapses a collection of arrays into a single, flat collection.
 func (c MultiDimensionalArrayCollection) Collapse() Collection {
 	if len(c.value[0]) == 0 {
 		return Collect([]interface{}{})
@@ -26,6 +27,7 @@ func (c MultiDimensionalArrayCollection) Collapse() Collection {
 	return Collect(d)
 }
 
+// Concat appends the given array or collection values onto the end of the collection.
 func (c MultiDimensionalArrayCollection) Concat(value interface{}) Collection {
 	return MultiDimensionalArrayCollection{
 		value:          append(c.value, value.([][]interface{})...),
@@ -33,10 +35,12 @@ func (c MultiDimensionalArrayCollection) Concat(value interface{}) Collection {
 	}
 }
 
+// Dd dumps the collection's items and ends execution of the script.
 func (c MultiDimensionalArrayCollection) Dd() {
 	dd(c)
 }
 
+// Dump dumps the collection's items.
 func (c MultiDimensionalArrayCollection) Dump() {
 	dump(c)
 }

@@ -12,6 +12,7 @@ type StringArrayCollection struct {
 	BaseCollection
 }
 
+// Join joins the collection's values with a string.
 func (c StringArrayCollection) Join(delimiter string) string {
 	s := ""
 	for i := 0; i < len(c.value); i++ {
@@ -24,6 +25,7 @@ func (c StringArrayCollection) Join(delimiter string) string {
 	return s
 }
 
+// Combine combines the values of the collection, as keys, with the values of another array or collection.
 func (c StringArrayCollection) Combine(value []interface{}) Collection {
 	var (
 		m      = make(map[string]interface{}, 0)
@@ -45,6 +47,7 @@ func (c StringArrayCollection) Combine(value []interface{}) Collection {
 	return d
 }
 
+// Prepend adds an item to the beginning of the collection.
 func (c StringArrayCollection) Prepend(values ...interface{}) Collection {
 
 	var d StringArrayCollection
@@ -58,6 +61,7 @@ func (c StringArrayCollection) Prepend(values ...interface{}) Collection {
 	return d
 }
 
+// Splice removes and returns a slice of items starting at the specified index.
 func (c StringArrayCollection) Splice(index ...int) Collection {
 
 	if len(index) == 1 {
@@ -77,6 +81,7 @@ func (c StringArrayCollection) Splice(index ...int) Collection {
 	}
 }
 
+// Take returns a new collection with the specified number of items.
 func (c StringArrayCollection) Take(num int) Collection {
 	var d StringArrayCollection
 	if num > c.length {
@@ -94,6 +99,7 @@ func (c StringArrayCollection) Take(num int) Collection {
 	return d
 }
 
+// All returns the underlying array represented by the collection.
 func (c StringArrayCollection) All() []interface{} {
 	s := make([]interface{}, len(c.value))
 	for i := 0; i < len(c.value); i++ {
@@ -103,6 +109,7 @@ func (c StringArrayCollection) All() []interface{} {
 	return s
 }
 
+// Mode returns the mode value of a given key.
 func (c StringArrayCollection) Mode(key ...string) []interface{} {
 	valueCount := c.CountBy()
 	maxCount := 0
@@ -121,10 +128,12 @@ func (c StringArrayCollection) Mode(key ...string) []interface{} {
 	return maxValue
 }
 
+// ToStringArray converts the collection into a plain golang slice which contains string.
 func (c StringArrayCollection) ToStringArray() []string {
 	return c.value
 }
 
+// Chunk breaks the collection into multiple, smaller collections of a given size.
 func (c StringArrayCollection) Chunk(num int) MultiDimensionalArrayCollection {
 	var d MultiDimensionalArrayCollection
 	d.length = c.length/num + 1
@@ -151,6 +160,7 @@ func (c StringArrayCollection) Chunk(num int) MultiDimensionalArrayCollection {
 	return d
 }
 
+// Concat appends the given array or collection values onto the end of the collection.
 func (c StringArrayCollection) Concat(value interface{}) Collection {
 	return StringArrayCollection{
 		value:          append(c.value, value.([]string)...),
@@ -158,6 +168,7 @@ func (c StringArrayCollection) Concat(value interface{}) Collection {
 	}
 }
 
+// Contains determines whether the collection contains a given item.
 func (c StringArrayCollection) Contains(value interface{}, callback ...interface{}) bool {
 	if len(callback) != 0 {
 		return callback[0].(func() bool)()
@@ -172,6 +183,7 @@ func (c StringArrayCollection) Contains(value interface{}, callback ...interface
 	}
 }
 
+// ContainsStrict has the same signature as the contains method; however, all values are compared using "strict" comparisons.
 func (c StringArrayCollection) ContainsStrict(value interface{}, callback ...interface{}) bool {
 	if len(callback) != 0 {
 		return callback[0].(func() bool)()
@@ -180,6 +192,7 @@ func (c StringArrayCollection) ContainsStrict(value interface{}, callback ...int
 	return containsValue(c.value, value)
 }
 
+// CountBy counts the occurrences of values in the collection. By default, the method counts the occurrences of every element.
 func (c StringArrayCollection) CountBy(callback ...interface{}) map[interface{}]int {
 	if len(callback) != 0 {
 		return callback[0].(func() map[interface{}]int)()
@@ -193,10 +206,10 @@ func (c StringArrayCollection) CountBy(callback ...interface{}) map[interface{}]
 	return valueCount
 }
 
+// CrossJoin cross joins the collection's values among the given arrays or collections, returning a Cartesian product with all possible permutations.
 func (c StringArrayCollection) CrossJoin(array ...[]interface{}) MultiDimensionalArrayCollection {
 	var d MultiDimensionalArrayCollection
 
-	// A two-dimensional-slice's initial
 	length := len(c.value)
 	for _, s := range array {
 		length *= len(s)
@@ -217,14 +230,18 @@ func (c StringArrayCollection) CrossJoin(array ...[]interface{}) MultiDimensiona
 	return d
 }
 
+// Dd dumps the collection's items and ends execution of the script.
 func (c StringArrayCollection) Dd() {
 	dd(c)
 }
 
+// Dump dumps the collection's items.
 func (c StringArrayCollection) Dump() {
 	dump(c)
 }
 
+// Diff compares the collection against another collection or a plain PHP array based on its values.
+// This method will return the values in the original collection that are not present in the given collection.
 func (c StringArrayCollection) Diff(m interface{}) Collection {
 	ms := m.([]string)
 	var d = make([]string, 0)
@@ -245,6 +262,7 @@ func (c StringArrayCollection) Diff(m interface{}) Collection {
 	}
 }
 
+// Each iterates over the items in the collection and passes each item to a callback.
 func (c StringArrayCollection) Each(cb func(item, value interface{}) (interface{}, bool)) Collection {
 	var d = make([]string, 0)
 	var (
@@ -264,6 +282,7 @@ func (c StringArrayCollection) Each(cb func(item, value interface{}) (interface{
 	}
 }
 
+// Every may be used to verify that all elements of a collection pass a given truth test.
 func (c StringArrayCollection) Every(cb CB) bool {
 	for key, value := range c.value {
 		if !cb(key, value) {
@@ -273,6 +292,7 @@ func (c StringArrayCollection) Every(cb CB) bool {
 	return true
 }
 
+// Filter filters the collection using the given callback, keeping only those items that pass a given truth test.
 func (c StringArrayCollection) Filter(cb CB) Collection {
 	var d = make([]string, 0)
 	for key, value := range c.value {
@@ -285,6 +305,7 @@ func (c StringArrayCollection) Filter(cb CB) Collection {
 	}
 }
 
+// First returns the first element in the collection that passes a given truth test.
 func (c StringArrayCollection) First(cbs ...CB) interface{} {
 	if len(cbs) > 0 {
 		for key, value := range c.value {
@@ -302,6 +323,7 @@ func (c StringArrayCollection) First(cbs ...CB) interface{} {
 	}
 }
 
+// Intersect removes any values from the original collection that are not present in the given array or collection.
 func (c StringArrayCollection) Intersect(keys []string) Collection {
 	var d = make([]string, 0)
 	for _, value := range c.value {
@@ -317,14 +339,37 @@ func (c StringArrayCollection) Intersect(keys []string) Collection {
 	}
 }
 
+// ForPage returns a new collection containing the items that would be present on a given page number.
+func (c StringArrayCollection) ForPage(page, size int) Collection {
+	var d = make([]string, len(c.value))
+	copy(d, c.value)
+	if size > len(d) || size*(page-1) > len(d) {
+		return StringArrayCollection{
+			value: d,
+		}
+	}
+	if (page+1)*size > len(d) {
+		return StringArrayCollection{
+			value: d[(page-1)*size:],
+		}
+	} else {
+		return StringArrayCollection{
+			value: d[(page-1)*size : (page)*size],
+		}
+	}
+}
+
+// IsEmpty returns true if the collection is empty; otherwise, false is returned.
 func (c StringArrayCollection) IsEmpty() bool {
 	return len(c.value) == 0
 }
 
+// IsNotEmpty returns true if the collection is not empty; otherwise, false is returned.
 func (c StringArrayCollection) IsNotEmpty() bool {
 	return len(c.value) != 0
 }
 
+// Last returns the last element in the collection that passes a given truth test.
 func (c StringArrayCollection) Last(cbs ...CB) interface{} {
 	if len(cbs) > 0 {
 		var last interface{}
@@ -343,6 +388,9 @@ func (c StringArrayCollection) Last(cbs ...CB) interface{} {
 	}
 }
 
+// Merge merges the given array or collection with the original collection. If a string key in the given items
+// matches a string key in the original collection, the given items's value will overwrite the value in the
+// original collection.
 func (c StringArrayCollection) Merge(i interface{}) Collection {
 	m := i.([]string)
 	var d = make([]string, len(c.value))
@@ -366,6 +414,7 @@ func (c StringArrayCollection) Merge(i interface{}) Collection {
 	}
 }
 
+// Pad will fill the array with the given value until the array reaches the specified size.
 func (c StringArrayCollection) Pad(num int, value interface{}) Collection {
 	if len(c.value) > num {
 		d := make([]string, len(c.value))
@@ -401,6 +450,7 @@ func (c StringArrayCollection) Pad(num int, value interface{}) Collection {
 	}
 }
 
+// Partition separate elements that pass a given truth test from those that do not.
 func (c StringArrayCollection) Partition(cb PartCB) (Collection, Collection) {
 	var d1 = make([]string, 0)
 	var d2 = make([]string, 0)
@@ -420,12 +470,14 @@ func (c StringArrayCollection) Partition(cb PartCB) (Collection, Collection) {
 	}
 }
 
+// Pop removes and returns the last item from the collection.
 func (c StringArrayCollection) Pop() interface{} {
 	last := c.value[len(c.value)-1]
 	c.value = c.value[:len(c.value)-1]
 	return last
 }
 
+// Push appends an item to the end of the collection.
 func (c StringArrayCollection) Push(v interface{}) Collection {
 	var d = make([]string, len(c.value)+1)
 	for i := 0; i < len(d); i++ {
@@ -441,6 +493,7 @@ func (c StringArrayCollection) Push(v interface{}) Collection {
 	}
 }
 
+// Random returns a random item from the collection.
 func (c StringArrayCollection) Random(num ...int) Collection {
 	if len(num) == 0 {
 		return BaseCollection{
@@ -462,6 +515,7 @@ func (c StringArrayCollection) Random(num ...int) Collection {
 	}
 }
 
+// Reduce reduces the collection to a single value, passing the result of each iteration into the subsequent iteration.
 func (c StringArrayCollection) Reduce(cb ReduceCB) interface{} {
 	var res interface{}
 
@@ -472,6 +526,7 @@ func (c StringArrayCollection) Reduce(cb ReduceCB) interface{} {
 	return res
 }
 
+// Reject filters the collection using the given callback.
 func (c StringArrayCollection) Reject(cb CB) Collection {
 	var d = make([]string, 0)
 	for key, value := range c.value {
@@ -484,6 +539,7 @@ func (c StringArrayCollection) Reject(cb CB) Collection {
 	}
 }
 
+// Reverse reverses the order of the collection's items, preserving the original keys.
 func (c StringArrayCollection) Reverse() Collection {
 	var d = make([]string, len(c.value))
 	j := 0
@@ -496,6 +552,8 @@ func (c StringArrayCollection) Reverse() Collection {
 	}
 }
 
+// Search searches the collection for the given value and returns its key if found. If the item is not found,
+// -1 is returned.
 func (c StringArrayCollection) Search(v interface{}) int {
 	if s, ok := v.(string); ok {
 		for i := 0; i < len(c.value); i++ {
@@ -514,6 +572,7 @@ func (c StringArrayCollection) Search(v interface{}) int {
 	return -1
 }
 
+// Shift removes and returns the first item from the collection.
 func (c StringArrayCollection) Shift() Collection {
 	var d = make([]string, len(c.value))
 	copy(d, c.value)
@@ -522,6 +581,7 @@ func (c StringArrayCollection) Shift() Collection {
 	}
 }
 
+// Shuffle randomly shuffles the items in the collection.
 func (c StringArrayCollection) Shuffle() Collection {
 	var d = make([]string, len(c.value))
 	copy(d, c.value)
@@ -532,6 +592,7 @@ func (c StringArrayCollection) Shuffle() Collection {
 	}
 }
 
+// Slice returns a slice of the collection starting at the given index.
 func (c StringArrayCollection) Slice(keys ...int) Collection {
 	var d = make([]string, len(c.value))
 	copy(d, c.value)
@@ -546,8 +607,9 @@ func (c StringArrayCollection) Slice(keys ...int) Collection {
 	}
 }
 
+// Split breaks a collection into the given number of groups.
 func (c StringArrayCollection) Split(num int) Collection {
-	var d = make([][]interface{}, math.Ceil(float64(len(c.value))/float64(num)))
+	var d = make([][]interface{}, int(math.Ceil(float64(len(c.value))/float64(num))))
 
 	j := 0
 	for i := 0; i < len(c.value); i++ {
@@ -569,6 +631,7 @@ func (c StringArrayCollection) Split(num int) Collection {
 	}
 }
 
+// Unique returns all of the unique items in the collection.
 func (c StringArrayCollection) Unique() Collection {
 	var d = make([]string, len(c.value))
 	copy(d, c.value)

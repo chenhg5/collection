@@ -14,10 +14,7 @@ type MapArrayCollection struct {
 	BaseCollection
 }
 
-func (c MapArrayCollection) Value() interface{} {
-	return c.value
-}
-
+// Sum returns the sum of all items in the collection.
 func (c MapArrayCollection) Sum(key ...string) decimal.Decimal {
 	var sum = decimal.New(0, 0)
 
@@ -28,6 +25,7 @@ func (c MapArrayCollection) Sum(key ...string) decimal.Decimal {
 	return sum
 }
 
+// Median returns the median value of a given key.
 func (c MapArrayCollection) Median(key ...string) decimal.Decimal {
 	var f = make([]decimal.Decimal, len(c.value))
 	for i := 0; i < len(c.value); i++ {
@@ -37,6 +35,7 @@ func (c MapArrayCollection) Median(key ...string) decimal.Decimal {
 	return f[len(f)/2].Add(f[len(f)/2-1]).Div(nd(2))
 }
 
+// Min returns the minimum value of a given key.
 func (c MapArrayCollection) Min(key ...string) decimal.Decimal {
 
 	var (
@@ -58,6 +57,7 @@ func (c MapArrayCollection) Min(key ...string) decimal.Decimal {
 	return smallest
 }
 
+// Max returns the maximum value of a given key.
 func (c MapArrayCollection) Max(key ...string) decimal.Decimal {
 
 	var (
@@ -79,6 +79,7 @@ func (c MapArrayCollection) Max(key ...string) decimal.Decimal {
 	return biggest
 }
 
+// Pluck retrieves all of the values for a given key.
 func (c MapArrayCollection) Pluck(key string) Collection {
 	var s = make([]interface{}, 0)
 	for i := 0; i < len(c.value); i++ {
@@ -87,6 +88,7 @@ func (c MapArrayCollection) Pluck(key string) Collection {
 	return Collect(s)
 }
 
+// Prepend adds an item to the beginning of the collection.
 func (c MapArrayCollection) Prepend(values ...interface{}) Collection {
 
 	var d MapArrayCollection
@@ -100,6 +102,7 @@ func (c MapArrayCollection) Prepend(values ...interface{}) Collection {
 	return d
 }
 
+// Only returns the items in the collection with the specified keys.
 func (c MapArrayCollection) Only(keys []string) Collection {
 	var d MapArrayCollection
 
@@ -117,6 +120,7 @@ func (c MapArrayCollection) Only(keys []string) Collection {
 	return d
 }
 
+// Splice removes and returns a slice of items starting at the specified index.
 func (c MapArrayCollection) Splice(index ...int) Collection {
 
 	if len(index) == 1 {
@@ -136,6 +140,7 @@ func (c MapArrayCollection) Splice(index ...int) Collection {
 	}
 }
 
+// Take returns a new collection with the specified number of items.
 func (c MapArrayCollection) Take(num int) Collection {
 	var d MapArrayCollection
 	if num > c.length {
@@ -153,6 +158,7 @@ func (c MapArrayCollection) Take(num int) Collection {
 	return d
 }
 
+// All returns the underlying array represented by the collection.
 func (c MapArrayCollection) All() []interface{} {
 	s := make([]interface{}, len(c.value))
 	for i := 0; i < len(c.value); i++ {
@@ -162,6 +168,7 @@ func (c MapArrayCollection) All() []interface{} {
 	return s
 }
 
+// Mode returns the mode value of a given key.
 func (c MapArrayCollection) Mode(key ...string) []interface{} {
 	valueCount := make(map[interface{}]int)
 	for i := 0; i < c.length; i++ {
@@ -186,10 +193,12 @@ func (c MapArrayCollection) Mode(key ...string) []interface{} {
 	return maxValue
 }
 
+// ToMapArray converts the collection into a plain golang slice which contains map.
 func (c MapArrayCollection) ToMapArray() []map[string]interface{} {
 	return c.value
 }
 
+// Chunk breaks the collection into multiple, smaller collections of a given size.
 func (c MapArrayCollection) Chunk(num int) MultiDimensionalArrayCollection {
 	var d MultiDimensionalArrayCollection
 	d.length = c.length/num + 1
@@ -216,6 +225,7 @@ func (c MapArrayCollection) Chunk(num int) MultiDimensionalArrayCollection {
 	return d
 }
 
+// Concat appends the given array or collection values onto the end of the collection.
 func (c MapArrayCollection) Concat(value interface{}) Collection {
 	return MapArrayCollection{
 		value:          append(c.value, value.([]map[string]interface{})...),
@@ -223,6 +233,7 @@ func (c MapArrayCollection) Concat(value interface{}) Collection {
 	}
 }
 
+// Contains determines whether the collection contains a given item.
 func (c MapArrayCollection) Contains(value interface{}, callback ...interface{}) bool {
 	if len(callback) != 0 {
 		return callback[0].(func() bool)()
@@ -305,6 +316,7 @@ func containsKeyValue(m map[string]interface{}, value map[string]interface{}) bo
 	return true
 }
 
+// ContainsStrict has the same signature as the contains method; however, all values are compared using "strict" comparisons.
 func (c MapArrayCollection) ContainsStrict(value interface{}, callback ...interface{}) bool {
 	if len(callback) != 0 {
 		return callback[0].(func() bool)()
@@ -319,6 +331,7 @@ func (c MapArrayCollection) ContainsStrict(value interface{}, callback ...interf
 	return false
 }
 
+// CrossJoin cross joins the collection's values among the given arrays or collections, returning a Cartesian product with all possible permutations.
 func (c MapArrayCollection) CrossJoin(array ...[]interface{}) MultiDimensionalArrayCollection {
 	var d MultiDimensionalArrayCollection
 
@@ -362,14 +375,17 @@ func assignmentToValue(value, array [][]interface{}, vl, si, ai, preOffset int) 
 	}
 }
 
+// Dd dumps the collection's items and ends execution of the script.
 func (c MapArrayCollection) Dd() {
 	dd(c)
 }
 
+// Dump dumps the collection's items.
 func (c MapArrayCollection) Dump() {
 	dump(c)
 }
 
+// Every may be used to verify that all elements of a collection pass a given truth test.
 func (c MapArrayCollection) Every(cb CB) bool {
 	for key, value := range c.value {
 		if !cb(key, value) {
@@ -379,6 +395,7 @@ func (c MapArrayCollection) Every(cb CB) bool {
 	return true
 }
 
+// Filter filters the collection using the given callback, keeping only those items that pass a given truth test.
 func (c MapArrayCollection) Filter(cb CB) Collection {
 	var d = make([]map[string]interface{}, 0)
 	copy(d, c.value)
@@ -392,6 +409,7 @@ func (c MapArrayCollection) Filter(cb CB) Collection {
 	}
 }
 
+// First returns the first element in the collection that passes a given truth test.
 func (c MapArrayCollection) First(cbs ...CB) interface{} {
 	if len(cbs) > 0 {
 		for key, value := range c.value {
@@ -409,6 +427,7 @@ func (c MapArrayCollection) First(cbs ...CB) interface{} {
 	}
 }
 
+// FirstWhere returns the first element in the collection with the given key / value pair.
 func (c MapArrayCollection) FirstWhere(key string, values ...interface{}) map[string]interface{} {
 	if len(values) < 1 {
 		for _, value := range c.value {
@@ -459,6 +478,7 @@ func (c MapArrayCollection) FirstWhere(key string, values ...interface{}) map[st
 	return map[string]interface{}{}
 }
 
+// GroupBy groups the collection's items by a given key.
 func (c MapArrayCollection) GroupBy(k string) Collection {
 	var d = make(map[string]interface{}, 0)
 	for _, value := range c.value {
@@ -480,6 +500,7 @@ func (c MapArrayCollection) GroupBy(k string) Collection {
 	}
 }
 
+// Implode joins the items in a collection. Its arguments depend on the type of items in the collection.
 func (c MapArrayCollection) Implode(key string, delimiter string) string {
 	var res = ""
 	for _, value := range c.value {
@@ -492,14 +513,18 @@ func (c MapArrayCollection) Implode(key string, delimiter string) string {
 	return res[:len(res)-1]
 }
 
+// IsEmpty returns true if the collection is empty; otherwise, false is returned.
 func (c MapArrayCollection) IsEmpty() bool {
 	return len(c.value) == 0
 }
 
+// IsNotEmpty returns true if the collection is not empty; otherwise, false is returned.
 func (c MapArrayCollection) IsNotEmpty() bool {
 	return len(c.value) != 0
 }
 
+// KeyBy keys the collection by the given key. If multiple items have the same key, only the last one will
+// appear in the new collection.
 func (c MapArrayCollection) KeyBy(v interface{}) Collection {
 	var d = make(map[string]interface{}, 0)
 	if k, ok := v.(string); ok {
@@ -525,6 +550,7 @@ func (c MapArrayCollection) KeyBy(v interface{}) Collection {
 	}
 }
 
+// Last returns the last element in the collection that passes a given truth test.
 func (c MapArrayCollection) Last(cbs ...CB) interface{} {
 	if len(cbs) > 0 {
 		var last interface{}
@@ -543,6 +569,7 @@ func (c MapArrayCollection) Last(cbs ...CB) interface{} {
 	}
 }
 
+// MapToGroups groups the collection's items by the given callback.
 func (c MapArrayCollection) MapToGroups(cb MapCB) Collection {
 	var d = make(map[string]interface{}, 0)
 	for _, value := range c.value {
@@ -560,6 +587,7 @@ func (c MapArrayCollection) MapToGroups(cb MapCB) Collection {
 	}
 }
 
+// MapWithKeys iterates through the collection and passes each value to the given callback.
 func (c MapArrayCollection) MapWithKeys(cb MapCB) Collection {
 	var d = make(map[string]interface{}, 0)
 	for _, value := range c.value {
@@ -571,6 +599,7 @@ func (c MapArrayCollection) MapWithKeys(cb MapCB) Collection {
 	}
 }
 
+// Partition separate elements that pass a given truth test from those that do not.
 func (c MapArrayCollection) Partition(cb PartCB) (Collection, Collection) {
 	var d1 = make([]map[string]interface{}, 0)
 	var d2 = make([]map[string]interface{}, 0)
@@ -590,12 +619,14 @@ func (c MapArrayCollection) Partition(cb PartCB) (Collection, Collection) {
 	}
 }
 
+// Pop removes and returns the last item from the collection.
 func (c MapArrayCollection) Pop() interface{} {
 	last := c.value[len(c.value)-1]
 	c.value = c.value[:len(c.value)-1]
 	return last
 }
 
+// Push appends an item to the end of the collection.
 func (c MapArrayCollection) Push(v interface{}) Collection {
 	var d = make([]map[string]interface{}, len(c.value)+1)
 	for i := 0; i < len(d); i++ {
@@ -611,6 +642,7 @@ func (c MapArrayCollection) Push(v interface{}) Collection {
 	}
 }
 
+// Random returns a random item from the collection.
 func (c MapArrayCollection) Random(num ...int) Collection {
 	if len(num) == 0 {
 		return BaseCollection{
@@ -632,6 +664,7 @@ func (c MapArrayCollection) Random(num ...int) Collection {
 	}
 }
 
+// Reduce reduces the collection to a single value, passing the result of each iteration into the subsequent iteration.
 func (c MapArrayCollection) Reduce(cb ReduceCB) interface{} {
 	var res interface{}
 
@@ -642,6 +675,7 @@ func (c MapArrayCollection) Reduce(cb ReduceCB) interface{} {
 	return res
 }
 
+// Reject filters the collection using the given callback.
 func (c MapArrayCollection) Reject(cb CB) Collection {
 	var d = make([]map[string]interface{}, 0)
 	for key, value := range c.value {
@@ -654,6 +688,7 @@ func (c MapArrayCollection) Reject(cb CB) Collection {
 	}
 }
 
+// Reverse reverses the order of the collection's items, preserving the original keys.
 func (c MapArrayCollection) Reverse() Collection {
 	var d = make([]map[string]interface{}, len(c.value))
 	j := 0
@@ -666,6 +701,8 @@ func (c MapArrayCollection) Reverse() Collection {
 	}
 }
 
+// Search searches the collection for the given value and returns its key if found. If the item is not found,
+// -1 is returned.
 func (c MapArrayCollection) Search(v interface{}) int {
 	cb := v.(CB)
 	for i := 0; i < len(c.value); i++ {
@@ -676,6 +713,7 @@ func (c MapArrayCollection) Search(v interface{}) int {
 	return -1
 }
 
+// Shift removes and returns the first item from the collection.
 func (c MapArrayCollection) Shift() Collection {
 	var d = make([]map[string]interface{}, len(c.value))
 	copy(d, c.value)
@@ -685,6 +723,7 @@ func (c MapArrayCollection) Shift() Collection {
 	}
 }
 
+// Shuffle randomly shuffles the items in the collection.
 func (c MapArrayCollection) Shuffle() Collection {
 	var d = make([]map[string]interface{}, len(c.value))
 	copy(d, c.value)
@@ -695,6 +734,7 @@ func (c MapArrayCollection) Shuffle() Collection {
 	}
 }
 
+// Slice returns a slice of the collection starting at the given index.
 func (c MapArrayCollection) Slice(keys ...int) Collection {
 	var d = make([]map[string]interface{}, len(c.value))
 	copy(d, c.value)
@@ -709,8 +749,9 @@ func (c MapArrayCollection) Slice(keys ...int) Collection {
 	}
 }
 
+// Split breaks a collection into the given number of groups.
 func (c MapArrayCollection) Split(num int) Collection {
-	var d = make([][]interface{}, math.Ceil(float64(len(c.value))/float64(num)))
+	var d = make([][]interface{}, int(math.Ceil(float64(len(c.value))/float64(num))))
 
 	j := 0
 	for i := 0; i < len(c.value); i++ {
@@ -732,6 +773,7 @@ func (c MapArrayCollection) Split(num int) Collection {
 	}
 }
 
+// WhereIn filters the collection by a given key / value contained within the given array.
 func (c MapArrayCollection) WhereIn(key string, in []interface{}) Collection {
 	var d = make([]map[string]interface{}, 0)
 	for i := 0; i < len(c.value); i++ {
@@ -747,6 +789,7 @@ func (c MapArrayCollection) WhereIn(key string, in []interface{}) Collection {
 	}
 }
 
+// WhereNotIn filters the collection by a given key / value not contained within the given array.
 func (c MapArrayCollection) WhereNotIn(key string, in []interface{}) Collection {
 	var d = make([]map[string]interface{}, 0)
 	for i := 0; i < len(c.value); i++ {
@@ -766,6 +809,7 @@ func (c MapArrayCollection) WhereNotIn(key string, in []interface{}) Collection 
 	}
 }
 
+// Where filters the collection by a given key / value pair.
 func (c MapArrayCollection) Where(key string, values ...interface{}) Collection {
 	var d = make([]map[string]interface{}, 0)
 	if len(values) < 1 {

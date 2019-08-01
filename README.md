@@ -16,7 +16,7 @@ In general, Collection are immutable, meaning every Collection method returns an
 ```golang
 a := []int{2,3,4,5,6,7}
 
-Collect(a).Each(func(item, value interface{} {
+Collect(a).Each(func(item, value interface{}) (interface{}, bool) {
     return value.(decimal.Decimal).IntPart() + 2, false
 }).ToIntArray()
 

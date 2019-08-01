@@ -12,6 +12,7 @@ type NumberArrayCollection struct {
 	BaseCollection
 }
 
+// Sum returns the sum of all items in the collection.
 func (c NumberArrayCollection) Sum(key ...string) decimal.Decimal {
 
 	var sum = decimal.New(0, 0)
@@ -23,6 +24,7 @@ func (c NumberArrayCollection) Sum(key ...string) decimal.Decimal {
 	return sum
 }
 
+// Min returns the minimum value of a given key.
 func (c NumberArrayCollection) Min(key ...string) decimal.Decimal {
 
 	var smallest = decimal.New(0, 0)
@@ -40,6 +42,7 @@ func (c NumberArrayCollection) Min(key ...string) decimal.Decimal {
 	return smallest
 }
 
+// Max returns the maximum value of a given key.
 func (c NumberArrayCollection) Max(key ...string) decimal.Decimal {
 
 	var biggest = decimal.New(0, 0)
@@ -57,6 +60,7 @@ func (c NumberArrayCollection) Max(key ...string) decimal.Decimal {
 	return biggest
 }
 
+// Prepend adds an item to the beginning of the collection.
 func (c NumberArrayCollection) Prepend(values ...interface{}) Collection {
 	var d NumberArrayCollection
 
@@ -69,6 +73,7 @@ func (c NumberArrayCollection) Prepend(values ...interface{}) Collection {
 	return d
 }
 
+// Splice removes and returns a slice of items starting at the specified index.
 func (c NumberArrayCollection) Splice(index ...int) Collection {
 
 	if len(index) == 1 {
@@ -88,6 +93,7 @@ func (c NumberArrayCollection) Splice(index ...int) Collection {
 	}
 }
 
+// Take returns a new collection with the specified number of items.
 func (c NumberArrayCollection) Take(num int) Collection {
 	var d NumberArrayCollection
 	if num > c.length {
@@ -105,6 +111,7 @@ func (c NumberArrayCollection) Take(num int) Collection {
 	return d
 }
 
+// All returns the underlying array represented by the collection.
 func (c NumberArrayCollection) All() []interface{} {
 	s := make([]interface{}, len(c.value))
 	for i := 0; i < len(c.value); i++ {
@@ -114,6 +121,7 @@ func (c NumberArrayCollection) All() []interface{} {
 	return s
 }
 
+// Mode returns the mode value of a given key.
 func (c NumberArrayCollection) Mode(key ...string) []interface{} {
 	valueCount := c.CountBy()
 	maxCount := 0
@@ -132,10 +140,12 @@ func (c NumberArrayCollection) Mode(key ...string) []interface{} {
 	return maxValue
 }
 
+// ToNumberArray converts the collection into a plain golang slice which contains decimal.Decimal.
 func (c NumberArrayCollection) ToNumberArray() []decimal.Decimal {
 	return c.value
 }
 
+// ToIntArray converts the collection into a plain golang slice which contains int.
 func (c NumberArrayCollection) ToIntArray() []int {
 	var v = make([]int, len(c.value))
 	for i, value := range c.value {
@@ -144,6 +154,7 @@ func (c NumberArrayCollection) ToIntArray() []int {
 	return v
 }
 
+// Chunk breaks the collection into multiple, smaller collections of a given size.
 func (c NumberArrayCollection) Chunk(num int) MultiDimensionalArrayCollection {
 	var d MultiDimensionalArrayCollection
 	d.length = c.length/num + 1
@@ -170,6 +181,7 @@ func (c NumberArrayCollection) Chunk(num int) MultiDimensionalArrayCollection {
 	return d
 }
 
+// Concat appends the given array or collection values onto the end of the collection.
 func (c NumberArrayCollection) Concat(value interface{}) Collection {
 	return NumberArrayCollection{
 		value:          append(c.value, value.([]decimal.Decimal)...),
@@ -177,6 +189,7 @@ func (c NumberArrayCollection) Concat(value interface{}) Collection {
 	}
 }
 
+// Contains determines whether the collection contains a given item.
 func (c NumberArrayCollection) Contains(value interface{}, callback ...interface{}) bool {
 	if len(callback) != 0 {
 		return callback[0].(func() bool)()
@@ -185,6 +198,7 @@ func (c NumberArrayCollection) Contains(value interface{}, callback ...interface
 	return containsValue(c.value, value)
 }
 
+// ContainsStrict has the same signature as the contains method; however, all values are compared using "strict" comparisons.
 func (c NumberArrayCollection) ContainsStrict(value interface{}, callback ...interface{}) bool {
 	if len(callback) != 0 {
 		return callback[0].(func() bool)()
@@ -193,6 +207,7 @@ func (c NumberArrayCollection) ContainsStrict(value interface{}, callback ...int
 	return containsValue(c.value, value)
 }
 
+// CountBy counts the occurrences of values in the collection. By default, the method counts the occurrences of every element.
 func (c NumberArrayCollection) CountBy(callback ...interface{}) map[interface{}]int {
 	if len(callback) != 0 {
 		return callback[0].(func() map[interface{}]int)()
@@ -207,6 +222,7 @@ func (c NumberArrayCollection) CountBy(callback ...interface{}) map[interface{}]
 	return valueCount
 }
 
+// CrossJoin cross joins the collection's values among the given arrays or collections, returning a Cartesian product with all possible permutations.
 func (c NumberArrayCollection) CrossJoin(array ...[]interface{}) MultiDimensionalArrayCollection {
 	var d MultiDimensionalArrayCollection
 
@@ -231,14 +247,18 @@ func (c NumberArrayCollection) CrossJoin(array ...[]interface{}) MultiDimensiona
 	return d
 }
 
+// Dd dumps the collection's items and ends execution of the script.
 func (c NumberArrayCollection) Dd() {
 	dd(c)
 }
 
+// Dump dumps the collection's items.
 func (c NumberArrayCollection) Dump() {
 	dump(c)
 }
 
+// Diff compares the collection against another collection or a plain PHP array based on its values.
+// This method will return the values in the original collection that are not present in the given collection.
 func (c NumberArrayCollection) Diff(m interface{}) Collection {
 	ms := newDecimalArray(m)
 	var d = make([]decimal.Decimal, 0)
@@ -259,6 +279,7 @@ func (c NumberArrayCollection) Diff(m interface{}) Collection {
 	}
 }
 
+// Each iterates over the items in the collection and passes each item to a callback.
 func (c NumberArrayCollection) Each(cb func(item, value interface{}) (interface{}, bool)) Collection {
 	var d = make([]decimal.Decimal, 0)
 	var (
@@ -278,6 +299,7 @@ func (c NumberArrayCollection) Each(cb func(item, value interface{}) (interface{
 	}
 }
 
+// Every may be used to verify that all elements of a collection pass a given truth test.
 func (c NumberArrayCollection) Every(cb CB) bool {
 	for key, value := range c.value {
 		if !cb(key, value) {
@@ -287,6 +309,7 @@ func (c NumberArrayCollection) Every(cb CB) bool {
 	return true
 }
 
+// Filter filters the collection using the given callback, keeping only those items that pass a given truth test.
 func (c NumberArrayCollection) Filter(cb CB) Collection {
 	var d = make([]decimal.Decimal, 0)
 	for key, value := range c.value {
@@ -299,6 +322,7 @@ func (c NumberArrayCollection) Filter(cb CB) Collection {
 	}
 }
 
+// First returns the first element in the collection that passes a given truth test.
 func (c NumberArrayCollection) First(cbs ...CB) interface{} {
 	if len(cbs) > 0 {
 		for key, value := range c.value {
@@ -316,6 +340,7 @@ func (c NumberArrayCollection) First(cbs ...CB) interface{} {
 	}
 }
 
+// ForPage returns a new collection containing the items that would be present on a given page number.
 func (c NumberArrayCollection) ForPage(page, size int) Collection {
 	var d = make([]decimal.Decimal, len(c.value))
 	copy(d, c.value)
@@ -335,14 +360,17 @@ func (c NumberArrayCollection) ForPage(page, size int) Collection {
 	}
 }
 
+// IsEmpty returns true if the collection is empty; otherwise, false is returned.
 func (c NumberArrayCollection) IsEmpty() bool {
 	return len(c.value) == 0
 }
 
+// IsNotEmpty returns true if the collection is not empty; otherwise, false is returned.
 func (c NumberArrayCollection) IsNotEmpty() bool {
 	return len(c.value) != 0
 }
 
+// Last returns the last element in the collection that passes a given truth test.
 func (c NumberArrayCollection) Last(cbs ...CB) interface{} {
 	if len(cbs) > 0 {
 		var last interface{}
@@ -361,6 +389,7 @@ func (c NumberArrayCollection) Last(cbs ...CB) interface{} {
 	}
 }
 
+// Median returns the median value of a given key.
 func (c NumberArrayCollection) Median(key ...string) decimal.Decimal {
 
 	if len(c.value) < 2 {
@@ -373,6 +402,9 @@ func (c NumberArrayCollection) Median(key ...string) decimal.Decimal {
 	return f[len(f)/2].Add(f[len(f)/2-1]).Div(nd(2))
 }
 
+// Merge merges the given array or collection with the original collection. If a string key in the given items
+// matches a string key in the original collection, the given items's value will overwrite the value in the
+// original collection.
 func (c NumberArrayCollection) Merge(i interface{}) Collection {
 	m := newDecimalArray(i)
 	var d = make([]decimal.Decimal, len(c.value))
@@ -384,6 +416,7 @@ func (c NumberArrayCollection) Merge(i interface{}) Collection {
 	}
 }
 
+// Pad will fill the array with the given value until the array reaches the specified size.
 func (c NumberArrayCollection) Pad(num int, value interface{}) Collection {
 	if len(c.value) > num {
 		d := make([]decimal.Decimal, len(c.value))
@@ -419,6 +452,7 @@ func (c NumberArrayCollection) Pad(num int, value interface{}) Collection {
 	}
 }
 
+// Partition separate elements that pass a given truth test from those that do not.
 func (c NumberArrayCollection) Partition(cb PartCB) (Collection, Collection) {
 	var d1 = make([]decimal.Decimal, 0)
 	var d2 = make([]decimal.Decimal, 0)
@@ -438,12 +472,14 @@ func (c NumberArrayCollection) Partition(cb PartCB) (Collection, Collection) {
 	}
 }
 
+// Pop removes and returns the last item from the collection.
 func (c NumberArrayCollection) Pop() interface{} {
 	last := c.value[len(c.value)-1]
 	c.value = c.value[:len(c.value)-1]
 	return last
 }
 
+// Push appends an item to the end of the collection.
 func (c NumberArrayCollection) Push(v interface{}) Collection {
 	var d = make([]decimal.Decimal, len(c.value)+1)
 	for i := 0; i < len(d); i++ {
@@ -459,6 +495,7 @@ func (c NumberArrayCollection) Push(v interface{}) Collection {
 	}
 }
 
+// Random returns a random item from the collection.
 func (c NumberArrayCollection) Random(num ...int) Collection {
 	if len(num) == 0 {
 		return BaseCollection{
@@ -480,6 +517,7 @@ func (c NumberArrayCollection) Random(num ...int) Collection {
 	}
 }
 
+// Reduce reduces the collection to a single value, passing the result of each iteration into the subsequent iteration.
 func (c NumberArrayCollection) Reduce(cb ReduceCB) interface{} {
 	var res interface{}
 
@@ -490,6 +528,7 @@ func (c NumberArrayCollection) Reduce(cb ReduceCB) interface{} {
 	return res
 }
 
+// Reject filters the collection using the given callback.
 func (c NumberArrayCollection) Reject(cb CB) Collection {
 	var d = make([]decimal.Decimal, 0)
 	for key, value := range c.value {
@@ -502,6 +541,7 @@ func (c NumberArrayCollection) Reject(cb CB) Collection {
 	}
 }
 
+// Reverse reverses the order of the collection's items, preserving the original keys.
 func (c NumberArrayCollection) Reverse() Collection {
 	var d = make([]decimal.Decimal, len(c.value))
 	j := 0
@@ -514,6 +554,8 @@ func (c NumberArrayCollection) Reverse() Collection {
 	}
 }
 
+// Search searches the collection for the given value and returns its key if found. If the item is not found,
+// -1 is returned.
 func (c NumberArrayCollection) Search(v interface{}) int {
 	if cb, ok := v.(CB); ok {
 		for i := 0; i < len(c.value); i++ {
@@ -532,6 +574,7 @@ func (c NumberArrayCollection) Search(v interface{}) int {
 	return -1
 }
 
+// Shift removes and returns the first item from the collection.
 func (c NumberArrayCollection) Shift() Collection {
 	var d = make([]decimal.Decimal, len(c.value))
 	copy(d, c.value)
@@ -541,6 +584,7 @@ func (c NumberArrayCollection) Shift() Collection {
 	}
 }
 
+// Shuffle randomly shuffles the items in the collection.
 func (c NumberArrayCollection) Shuffle() Collection {
 	var d = make([]decimal.Decimal, len(c.value))
 	copy(d, c.value)
@@ -551,6 +595,7 @@ func (c NumberArrayCollection) Shuffle() Collection {
 	}
 }
 
+// Slice returns a slice of the collection starting at the given index.
 func (c NumberArrayCollection) Slice(keys ...int) Collection {
 	var d = make([]decimal.Decimal, len(c.value))
 	copy(d, c.value)
@@ -565,6 +610,7 @@ func (c NumberArrayCollection) Slice(keys ...int) Collection {
 	}
 }
 
+// Sort sorts the collection.
 func (c NumberArrayCollection) Sort() Collection {
 	var d = make([]decimal.Decimal, len(c.value))
 	copy(d, c.value)
@@ -574,6 +620,7 @@ func (c NumberArrayCollection) Sort() Collection {
 	}
 }
 
+// SortByDesc has the same signature as the sortBy method, but will sort the collection in the opposite order.
 func (c NumberArrayCollection) SortByDesc() Collection {
 	var d = make([]decimal.Decimal, len(c.value))
 	copy(d, c.value)
@@ -583,8 +630,9 @@ func (c NumberArrayCollection) SortByDesc() Collection {
 	}
 }
 
+// Split breaks a collection into the given number of groups.
 func (c NumberArrayCollection) Split(num int) Collection {
-	var d = make([][]interface{}, math.Ceil(float64(len(c.value))/float64(num)))
+	var d = make([][]interface{}, int(math.Ceil(float64(len(c.value))/float64(num))))
 
 	j := 0
 	for i := 0; i < len(c.value); i++ {
@@ -606,6 +654,7 @@ func (c NumberArrayCollection) Split(num int) Collection {
 	}
 }
 
+// Unique returns all of the unique items in the collection.
 func (c NumberArrayCollection) Unique() Collection {
 	var d = make([]decimal.Decimal, len(c.value))
 	copy(d, c.value)
