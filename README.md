@@ -7,6 +7,10 @@ And then you can use the powerful and graceful apis of Collection to process the
 
 In general, Collection are immutable, meaning every Collection method returns an entirely new Collection instance
 
+## doc
+
+[here](https://godoc.org/github.com/chenhg5/collection#Collection)
+
 ## example
 
 ```golang
