@@ -1,4 +1,4 @@
-# Collection
+# Go Collection
 
 Collection provides a fluent, convenient wrapper for working with arrays of data.
 
