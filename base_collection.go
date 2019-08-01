@@ -46,6 +46,10 @@ func (c BaseCollection) Pluck(key string) Collection {
 	panic("not implement")
 }
 
+func (c BaseCollection) ToIntArray() []int {
+	panic("not implement")
+}
+
 func (c BaseCollection) Mode(key ...string) []interface{} {
 	panic("not implement")
 }

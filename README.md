@@ -18,9 +18,9 @@ a := []int{2,3,4,5,6,7}
 
 Collect(a).Each(func(item, value interface{} {
     return value.(decimal.Decimal).IntPart() + 2, false
-}).ToNumberArray()
+}).ToIntArray()
 
-// []decimal.Decimal{4,5,6,7,8,9}
+// []int{4,5,6,7,8,9}
 
 b := []map[string]interface{}{
     {"name": "Jack", "sex": 0},

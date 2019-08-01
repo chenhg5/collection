@@ -136,6 +136,14 @@ func (c NumberArrayCollection) ToNumberArray() []decimal.Decimal {
 	return c.value
 }
 
+func (c NumberArrayCollection) ToIntArray() []int {
+	var v = make([]int, len(c.value))
+	for i, value := range c.value {
+		v[i] = int(value.IntPart())
+	}
+	return v
+}
+
 func (c NumberArrayCollection) Chunk(num int) MultiDimensionalArrayCollection {
 	var d MultiDimensionalArrayCollection
 	d.length = c.length/num + 1

@@ -371,6 +371,9 @@ type Collection interface {
 	// ToNumberArray converts the collection into a plain golang slice which contains decimal.Decimal.
 	ToNumberArray() []decimal.Decimal
 
+	// ToIntArray converts the collection into a plain golang slice which contains int.
+	ToIntArray() []int
+
 	// ToStringArray converts the collection into a plain golang slice which contains string.
 	ToStringArray() []string
 
