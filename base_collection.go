@@ -94,11 +94,6 @@ func (c BaseCollection) Take(num int) Collection {
 	panic("not implement")
 }
 
-// Average returns the average value of a given key.
-func (c BaseCollection) Average() {
-	panic("not implement")
-}
-
 // Chunk breaks the collection into multiple, smaller collections of a given size.
 func (c BaseCollection) Chunk(num int) MultiDimensionalArrayCollection {
 	panic("not implement")

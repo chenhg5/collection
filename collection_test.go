@@ -51,6 +51,20 @@ func ExampleBaseCollection_Sum() {
 	// Output: 129.11
 }
 
+func TestNumberArrayCollection_Avg(t *testing.T) {
+	assert.Equal(t, Collect(numbers).Avg().IntPart(), int64(25))
+
+	var floatTest = []float64{143.66, -14.55}
+	assert.Equal(t, Collect(floatTest).Avg().String(), "64.555")
+}
+
+func ExampleBaseCollection_Avg() {
+	var floatTest = []float64{143.66, -14.55}
+	fmt.Println(Collect(floatTest).Avg().String())
+
+	// Output: 64.555
+}
+
 func TestStringArrayCollection_Splice(t *testing.T) {
 	a := []string{"h", "e", "l", "l", "o"}
 

@@ -187,9 +187,6 @@ type Collection interface {
 	// Take returns a new collection with the specified number of items.
 	Take(num int) Collection
 
-	// Average returns the average value of a given key.
-	Average()
-
 	// Chunk breaks the collection into multiple, smaller collections of a given size.
 	Chunk(num int) MultiDimensionalArrayCollection
 

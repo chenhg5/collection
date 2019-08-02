@@ -25,6 +25,18 @@ func (c NumberArrayCollection) Sum(key ...string) decimal.Decimal {
 	return sum
 }
 
+// Avg returns the average value of a given key.
+func (c NumberArrayCollection) Avg(key ...string) decimal.Decimal {
+
+	var sum = decimal.New(0, 0)
+
+	for i := 0; i < len(c.value); i++ {
+		sum = sum.Add(c.value[i])
+	}
+
+	return sum.Div(nd(len(c.value)))
+}
+
 // Min returns the minimum value of a given key.
 func (c NumberArrayCollection) Min(key ...string) decimal.Decimal {
 

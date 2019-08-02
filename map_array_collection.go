@@ -26,6 +26,17 @@ func (c MapArrayCollection) Sum(key ...string) decimal.Decimal {
 	return sum
 }
 
+// Sum returns the sum of all items in the collection.
+func (c MapArrayCollection) Avg(key ...string) decimal.Decimal {
+	var sum = decimal.New(0, 0)
+
+	for i := 0; i < len(c.value); i++ {
+		sum = sum.Add(nd(c.value[i][key[0]]))
+	}
+
+	return sum.Div(nd(len(c.value)))
+}
+
 // Median returns the median value of a given key.
 func (c MapArrayCollection) Median(key ...string) decimal.Decimal {
 	var f = make([]decimal.Decimal, len(c.value))

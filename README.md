@@ -38,7 +38,7 @@ Collect(b).Where("name", "Jack").ToMapArray()[0]
 
 ``` 
 
-more saying is useless, start coding!
+[more examples](https://godoc.org/github.com/chenhg5/collection#BaseCollection.All)
 
 ## contribution
 
