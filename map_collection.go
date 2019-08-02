@@ -1,6 +1,7 @@
 package collection
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
@@ -262,4 +263,13 @@ func (c MapCollection) Merge(i interface{}) Collection {
 	return MapCollection{
 		value: d,
 	}
+}
+
+// ToJson converts the collection into a json string.
+func (c MapCollection) ToJson() string {
+	s, err := json.Marshal(c.value)
+	if err != nil {
+		panic(err)
+	}
+	return string(s)
 }

@@ -1,8 +1,18 @@
 package collection
 
+import "encoding/json"
+
 type MultiDimensionalArrayCollection struct {
 	value [][]interface{}
 	BaseCollection
+}
+
+func (c MultiDimensionalArrayCollection) Value() interface{} {
+	return c.value
+}
+
+func (c MultiDimensionalArrayCollection) ToMultiDimensionalArray() [][]interface{} {
+	return c.value
 }
 
 // Collapse collapses a collection of arrays into a single, flat collection.
@@ -43,4 +53,13 @@ func (c MultiDimensionalArrayCollection) Dd() {
 // Dump dumps the collection's items.
 func (c MultiDimensionalArrayCollection) Dump() {
 	dump(c)
+}
+
+// ToJson converts the collection into a json string.
+func (c MultiDimensionalArrayCollection) ToJson() string {
+	s, err := json.Marshal(c.value)
+	if err != nil {
+		panic(err)
+	}
+	return string(s)
 }

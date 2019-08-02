@@ -377,6 +377,9 @@ type Collection interface {
 	// ToStringArray converts the collection into a plain golang slice which contains string.
 	ToStringArray() []string
 
+	// ToMultiDimensionalArray converts the collection into a multi dimensional array.
+	ToMultiDimensionalArray() [][]interface{}
+
 	// ToMap converts the collection into a plain golang map.
 	ToMap() map[string]interface{}
 
@@ -548,25 +551,24 @@ func qsort(arr []decimal.Decimal, order bool) []decimal.Decimal {
 		var less []decimal.Decimal
 		var greater []decimal.Decimal
 		for _, value := range arr[1:] {
-			if order {
-				if value.LessThanOrEqual(pivot) {
-					less = append(less, value)
-				} else {
-					greater = append(greater, value)
-				}
+			if value.LessThanOrEqual(pivot) {
+				less = append(less, value)
 			} else {
-				if value.LessThanOrEqual(pivot) {
-					greater = append(greater, value)
-				} else {
-					less = append(less, value)
-				}
+				greater = append(greater, value)
 			}
 		}
 
 		var result []decimal.Decimal
-		result = append(result, qsort(less, order)...)
-		result = append(result, pivot)
-		result = append(result, qsort(greater, order)...)
+		if order {
+			result = append(result, qsort(less, order)...)
+			result = append(result, pivot)
+			result = append(result, qsort(greater, order)...)
+		} else {
+			result = append(result, qsort(greater, order)...)
+			result = append(result, pivot)
+			result = append(result, qsort(less, order)...)
+		}
+
 		return result
 	}
 }

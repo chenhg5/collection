@@ -1,6 +1,7 @@
 package collection
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"math/rand"
@@ -611,16 +612,16 @@ func (c StringArrayCollection) Slice(keys ...int) Collection {
 func (c StringArrayCollection) Split(num int) Collection {
 	var d = make([][]interface{}, int(math.Ceil(float64(len(c.value))/float64(num))))
 
-	j := 0
+	j := -1
 	for i := 0; i < len(c.value); i++ {
 		if i%num == 0 {
+			j++
 			if i+num <= len(c.value) {
 				d[j] = make([]interface{}, num)
 			} else {
 				d[j] = make([]interface{}, len(c.value)-i)
 			}
 			d[j][i%num] = c.value[i]
-			j++
 		} else {
 			d[j][i%num] = c.value[i]
 		}
@@ -653,4 +654,13 @@ func (c StringArrayCollection) Unique() Collection {
 	return StringArrayCollection{
 		value: x,
 	}
+}
+
+// ToJson converts the collection into a json string.
+func (c StringArrayCollection) ToJson() string {
+	s, err := json.Marshal(c.value)
+	if err != nil {
+		panic(err)
+	}
+	return string(s)
 }

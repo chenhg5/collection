@@ -1,6 +1,7 @@
 package collection
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/shopspring/decimal"
 	"math"
@@ -31,7 +32,7 @@ func (c MapArrayCollection) Median(key ...string) decimal.Decimal {
 	for i := 0; i < len(c.value); i++ {
 		f = append(f, nd(c.value[i][key[0]]))
 	}
-	qsort(f, true)
+	f = qsort(f, true)
 	return f[len(f)/2].Add(f[len(f)/2-1]).Div(nd(2))
 }
 
@@ -753,16 +754,16 @@ func (c MapArrayCollection) Slice(keys ...int) Collection {
 func (c MapArrayCollection) Split(num int) Collection {
 	var d = make([][]interface{}, int(math.Ceil(float64(len(c.value))/float64(num))))
 
-	j := 0
+	j := -1
 	for i := 0; i < len(c.value); i++ {
 		if i%num == 0 {
+			j++
 			if i+num <= len(c.value) {
 				d[j] = make([]interface{}, num)
 			} else {
 				d[j] = make([]interface{}, len(c.value)-i)
 			}
 			d[j][i%num] = c.value[i]
-			j++
 		} else {
 			d[j][i%num] = c.value[i]
 		}
@@ -861,4 +862,13 @@ func (c MapArrayCollection) Where(key string, values ...interface{}) Collection 
 	return MapArrayCollection{
 		value: d,
 	}
+}
+
+// ToJson converts the collection into a json string.
+func (c MapArrayCollection) ToJson() string {
+	s, err := json.Marshal(c.value)
+	if err != nil {
+		panic(err)
+	}
+	return string(s)
 }

@@ -1,6 +1,7 @@
 package collection
 
 import (
+	"encoding/json"
 	"github.com/shopspring/decimal"
 	"math"
 	"math/rand"
@@ -398,7 +399,7 @@ func (c NumberArrayCollection) Median(key ...string) decimal.Decimal {
 
 	var f = make([]decimal.Decimal, len(c.value))
 	copy(f, c.value)
-	qsort(f, true)
+	f = qsort(f, true)
 	return f[len(f)/2].Add(f[len(f)/2-1]).Div(nd(2))
 }
 
@@ -566,7 +567,7 @@ func (c NumberArrayCollection) Search(v interface{}) int {
 	} else {
 		n := nd(v)
 		for i := 0; i < len(c.value); i++ {
-			if n == c.value[i] {
+			if n.Equal(c.value[i]) {
 				return i
 			}
 		}
@@ -614,7 +615,7 @@ func (c NumberArrayCollection) Slice(keys ...int) Collection {
 func (c NumberArrayCollection) Sort() Collection {
 	var d = make([]decimal.Decimal, len(c.value))
 	copy(d, c.value)
-	qsort(d, true)
+	d = qsort(d, true)
 	return NumberArrayCollection{
 		value: d,
 	}
@@ -624,7 +625,7 @@ func (c NumberArrayCollection) Sort() Collection {
 func (c NumberArrayCollection) SortByDesc() Collection {
 	var d = make([]decimal.Decimal, len(c.value))
 	copy(d, c.value)
-	qsort(d, false)
+	d = qsort(d, false)
 	return NumberArrayCollection{
 		value: d,
 	}
@@ -634,16 +635,16 @@ func (c NumberArrayCollection) SortByDesc() Collection {
 func (c NumberArrayCollection) Split(num int) Collection {
 	var d = make([][]interface{}, int(math.Ceil(float64(len(c.value))/float64(num))))
 
-	j := 0
+	j := -1
 	for i := 0; i < len(c.value); i++ {
 		if i%num == 0 {
+			j++
 			if i+num <= len(c.value) {
 				d[j] = make([]interface{}, num)
 			} else {
 				d[j] = make([]interface{}, len(c.value)-i)
 			}
 			d[j][i%num] = c.value[i]
-			j++
 		} else {
 			d[j][i%num] = c.value[i]
 		}
@@ -664,7 +665,7 @@ func (c NumberArrayCollection) Unique() Collection {
 			x = append(x, i)
 		} else {
 			for k, v := range x {
-				if i == v {
+				if i.Equal(v) {
 					break
 				}
 				if k == len(x)-1 {
@@ -676,4 +677,13 @@ func (c NumberArrayCollection) Unique() Collection {
 	return NumberArrayCollection{
 		value: x,
 	}
+}
+
+// ToJson converts the collection into a json string.
+func (c NumberArrayCollection) ToJson() string {
+	s, err := json.Marshal(c.value)
+	if err != nil {
+		panic(err)
+	}
+	return string(s)
 }

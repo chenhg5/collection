@@ -405,6 +405,11 @@ func (c BaseCollection) ToNumberArray() []decimal.Decimal {
 }
 
 // ToStringArray converts the collection into a plain golang slice which contains string.
+func (c BaseCollection) ToMultiDimensionalArray() [][]interface{} {
+	panic("not implement")
+}
+
+// ToStringArray converts the collection into a plain golang slice which contains string.
 func (c BaseCollection) ToStringArray() []string {
 	panic("not implement")
 }
