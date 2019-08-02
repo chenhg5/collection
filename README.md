@@ -40,6 +40,6 @@ Collect(b).Where("name", "Jack").ToMapArray()[0]
 
 more saying is useless, start coding!
 
-## Contribution
+## contribution
 
 pr is very welcome. 
