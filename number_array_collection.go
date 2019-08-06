@@ -203,21 +203,22 @@ func (c NumberArrayCollection) Concat(value interface{}) Collection {
 }
 
 // Contains determines whether the collection contains a given item.
-func (c NumberArrayCollection) Contains(value interface{}, callback ...interface{}) bool {
+func (c NumberArrayCollection) Contains(value interface{}, callback ...CB) bool {
 	if len(callback) != 0 {
-		return callback[0].(func() bool)()
+		for k, v := range c.value {
+			if callback[0](k, v) {
+				return true
+			}
+		}
+		return false
 	}
 
-	return containsValue(c.value, value)
-}
-
-// ContainsStrict has the same signature as the contains method; however, all values are compared using "strict" comparisons.
-func (c NumberArrayCollection) ContainsStrict(value interface{}, callback ...interface{}) bool {
-	if len(callback) != 0 {
-		return callback[0].(func() bool)()
+	for _, v := range c.value {
+		if v.Equal(nd(value)) {
+			return true
+		}
 	}
-
-	return containsValue(c.value, value)
+	return false
 }
 
 // CountBy counts the occurrences of values in the collection. By default, the method counts the occurrences of every element.

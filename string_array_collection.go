@@ -2,7 +2,6 @@ package collection
 
 import (
 	"encoding/json"
-	"fmt"
 	"math"
 	"math/rand"
 	"time"
@@ -163,34 +162,31 @@ func (c StringArrayCollection) Chunk(num int) MultiDimensionalArrayCollection {
 
 // Concat appends the given array or collection values onto the end of the collection.
 func (c StringArrayCollection) Concat(value interface{}) Collection {
+	var d = make([]string, len(c.value))
+	copy(d, c.value)
 	return StringArrayCollection{
-		value:          append(c.value, value.([]string)...),
+		value:          append(d, value.([]string)...),
 		BaseCollection: BaseCollection{length: c.length + len(value.([]string))},
 	}
 }
 
 // Contains determines whether the collection contains a given item.
-func (c StringArrayCollection) Contains(value interface{}, callback ...interface{}) bool {
+func (c StringArrayCollection) Contains(value interface{}, callback ...CB) bool {
 	if len(callback) != 0 {
-		return callback[0].(func() bool)()
+		for k, v := range c.value {
+			if callback[0](k, v) {
+				return true
+			}
+		}
+		return false
 	}
 
-	t := fmt.Sprintf("%T", c.value)
-	switch {
-	case t == "[]string":
-		return containsValue(c.value, intToString(value))
-	default:
-		return containsValue(c.value, value)
+	for _, v := range c.value {
+		if v == value {
+			return true
+		}
 	}
-}
-
-// ContainsStrict has the same signature as the contains method; however, all values are compared using "strict" comparisons.
-func (c StringArrayCollection) ContainsStrict(value interface{}, callback ...interface{}) bool {
-	if len(callback) != 0 {
-		return callback[0].(func() bool)()
-	}
-
-	return containsValue(c.value, value)
+	return false
 }
 
 // CountBy counts the occurrences of values in the collection. By default, the method counts the occurrences of every element.

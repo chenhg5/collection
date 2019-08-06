@@ -6,7 +6,6 @@ import (
 	"github.com/shopspring/decimal"
 	"math"
 	"math/rand"
-	"strconv"
 	"time"
 )
 
@@ -243,104 +242,6 @@ func (c MapArrayCollection) Concat(value interface{}) Collection {
 		value:          append(c.value, value.([]map[string]interface{})...),
 		BaseCollection: BaseCollection{length: c.length + len(value.([]map[string]interface{}))},
 	}
-}
-
-// Contains determines whether the collection contains a given item.
-func (c MapArrayCollection) Contains(value interface{}, callback ...interface{}) bool {
-	if len(callback) != 0 {
-		return callback[0].(func() bool)()
-	}
-
-	t := fmt.Sprintf("%T", c.value)
-	switch {
-	case t == "[]map[string]string":
-		for _, m := range c.value {
-			if parseContainsParam(m, intToString(value)) {
-				return true
-			}
-		}
-		return false
-	default:
-		for _, m := range c.value {
-			if parseContainsParam(m, value) {
-				return true
-			}
-		}
-		return false
-	}
-}
-
-func parseContainsParam(m map[string]interface{}, value interface{}) bool {
-	switch value.(type) {
-	case map[string]interface{}:
-		return containsKeyValue(m, value.(map[string]interface{}))
-	default:
-		return containsValue(m, value)
-	}
-}
-
-func intToString(value interface{}) interface{} {
-	switch value.(type) {
-	case int:
-		return strconv.Itoa(value.(int))
-	case int64:
-		return strconv.FormatInt(value.(int64), 10)
-	default:
-		return value
-	}
-}
-
-func containsValue(m interface{}, value interface{}) bool {
-	switch m.(type) {
-	case map[string]interface{}:
-		for _, v := range m.(map[string]interface{}) {
-			if v == value {
-				return true
-			}
-		}
-		return false
-	case []decimal.Decimal:
-		for _, v := range m.([]decimal.Decimal) {
-			if v.Equal(nd(value)) {
-				return true
-			}
-		}
-		return false
-	case []string:
-		for _, v := range m.([]string) {
-			if v == value {
-				return true
-			}
-		}
-		return false
-	default:
-		panic("wrong type")
-	}
-}
-
-func containsKeyValue(m map[string]interface{}, value map[string]interface{}) bool {
-	for k, v := range value {
-		if _, ok := m[k]; !ok && m[k] != v {
-			return false
-		}
-	}
-
-	return true
-}
-
-// ContainsStrict has the same signature as the contains method; however, all values are compared using "strict" comparisons.
-func (c MapArrayCollection) ContainsStrict(value interface{}, callback ...interface{}) bool {
-	if len(callback) != 0 {
-		return callback[0].(func() bool)()
-	}
-
-	for _, m := range c.value {
-		if parseContainsParam(m, value) {
-			return true
-		}
-	}
-
-	return false
 }
 
 // CrossJoin cross joins the collection's values among the given arrays or collections, returning a Cartesian product with all possible permutations.

@@ -110,12 +110,7 @@ func (c BaseCollection) Concat(value interface{}) Collection {
 }
 
 // Contains determines whether the collection contains a given item.
-func (c BaseCollection) Contains(value interface{}, callback ...interface{}) bool {
-	panic("not implement")
-}
-
-// ContainsStrict has the same signature as the contains method; however, all values are compared using "strict" comparisons.
-func (c BaseCollection) ContainsStrict(value interface{}, callback ...interface{}) bool {
+func (c BaseCollection) Contains(value interface{}, callback ...CB) bool {
 	panic("not implement")
 }
 

@@ -197,10 +197,7 @@ type Collection interface {
 	Concat(value interface{}) Collection
 
 	// Contains determines whether the collection contains a given item.
-	Contains(value interface{}, callback ...interface{}) bool
-
-	// ContainsStrict has the same signature as the contains method; however, all values are compared using "strict" comparisons.
-	ContainsStrict(value interface{}, callback ...interface{}) bool
+	Contains(value interface{}, callback ...CB) bool
 
 	// CountBy counts the occurrences of values in the collection. By default, the method counts the occurrences of every element.
 	CountBy(callback ...interface{}) map[interface{}]int

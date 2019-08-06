@@ -238,26 +238,6 @@ func TestCollection_Contains(t *testing.T) {
 	}), true)
 }
 
-func TestCollection_ContainsStrict(t *testing.T) {
-	a := []string{"h", "e", "l", "l", "o"}
-
-	assert.Equal(t, Collect(foo).Contains(10), true)
-	assert.Equal(t, Collect(numbers).Contains(10), false)
-	assert.Equal(t, Collect(a).Contains("l"), true)
-	assert.Equal(t, Collect(foo[3]).Contains(map[string]interface{}{"foo": 40}), true)
-
-	c := Collect(numbers)
-	value := 10
-	assert.Equal(t, c.Contains(value, func() bool {
-		for _, v := range c.ToNumberArray() {
-			if v.GreaterThan(newDecimalFromInterface(value)) {
-				return true
-			}
-		}
-		return false
-	}), false)
-}
-
 func TestCollection_CountBy(t *testing.T) {
 	a := []string{"h", "e", "l", "l", "o"}
 	assert.Equal(t, Collect(a).CountBy()["l"], 2)
