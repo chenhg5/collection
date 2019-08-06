@@ -197,7 +197,7 @@ type Collection interface {
 	Concat(value interface{}) Collection
 
 	// Contains determines whether the collection contains a given item.
-	Contains(value interface{}, callback ...CB) bool
+	Contains(value ...interface{}) bool
 
 	// CountBy counts the occurrences of values in the collection. By default, the method counts the occurrences of every element.
 	CountBy(callback ...interface{}) map[interface{}]int

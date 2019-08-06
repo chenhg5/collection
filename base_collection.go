@@ -110,7 +110,7 @@ func (c BaseCollection) Concat(value interface{}) Collection {
 }
 
 // Contains determines whether the collection contains a given item.
-func (c BaseCollection) Contains(value interface{}, callback ...CB) bool {
+func (c BaseCollection) Contains(value ...interface{}) bool {
 	panic("not implement")
 }
 

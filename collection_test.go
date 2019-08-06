@@ -218,24 +218,19 @@ func TestCollection_Concat(t *testing.T) {
 }
 
 func TestCollection_Contains(t *testing.T) {
-	a := []string{"2", "3", "4", "5", "6"}
-
-	assert.Equal(t, Collect(foo).Contains(10), true)
-	assert.Equal(t, Collect(numbers).Contains(10), false)
-	assert.Equal(t, Collect(a).Contains(5), true)
-	assert.Equal(t, Collect(a).Contains("5"), true)
-	assert.Equal(t, Collect(foo[3]).Contains(map[string]interface{}{"foo": 40}), true)
 
 	c := Collect(numbers)
-	value := 10
-	assert.Equal(t, c.Contains(value, func() bool {
-		for _, v := range c.ToNumberArray() {
-			if v.LessThan(newDecimalFromInterface(value)) {
-				return true
-			}
-		}
-		return false
-	}), true)
+	assert.Equal(t, c.Contains(10), false)
+
+	var callback CB = func(item, value interface{}) bool {
+		return value.(decimal.Decimal).GreaterThan(nd(5))
+	}
+
+	assert.Equal(t, c.Contains(callback), true)
+
+	a := []string{"2", "3", "4", "5", "6"}
+	assert.Equal(t, Collect(a).Contains("5"), true)
+
 }
 
 func TestCollection_CountBy(t *testing.T) {
@@ -907,6 +902,12 @@ func TestBaseCollection_Search(t *testing.T) {
 	a := []int{2, 3, 4, 5, 6, 7}
 
 	assert.Equal(t, Collect(a).Search(3), 1)
+
+	var callback CB = func(item, value interface{}) bool {
+		return value.(decimal.Decimal).GreaterThan(nd(3))
+	}
+
+	assert.Equal(t, Collect(a).Search(callback), 2)
 }
 
 func ExampleBaseCollection_Search() {

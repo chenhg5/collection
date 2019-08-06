@@ -171,10 +171,10 @@ func (c StringArrayCollection) Concat(value interface{}) Collection {
 }
 
 // Contains determines whether the collection contains a given item.
-func (c StringArrayCollection) Contains(value interface{}, callback ...CB) bool {
-	if len(callback) != 0 {
+func (c StringArrayCollection) Contains(value ...interface{}) bool {
+	if callback, ok := value[0].(CB); ok {
 		for k, v := range c.value {
-			if callback[0](k, v) {
+			if callback(k, v) {
 				return true
 			}
 		}
@@ -182,7 +182,7 @@ func (c StringArrayCollection) Contains(value interface{}, callback ...CB) bool 
 	}
 
 	for _, v := range c.value {
-		if v == value {
+		if v == value[0].(string) {
 			return true
 		}
 	}
