@@ -239,14 +239,12 @@ func TestCollection_CountBy(t *testing.T) {
 	assert.Equal(t, Collect(numbers).CountBy()[float64(8)], 2)
 
 	c := Collect([]string{"alice@gmail.com", "bob@yahoo.com", "carlos@gmail.com"})
-	assert.Equal(t, c.CountBy(func() map[interface{}]int {
-		valueCount := make(map[interface{}]int)
-		for _, v := range c.ToStringArray() {
-			f := strings.Split(v, "@")[1]
-			valueCount[f]++
-		}
-		return valueCount
-	}), map[interface{}]int{"gmail.com": 2, "yahoo.com": 1})
+
+	var cb FilterFun = func(value interface{}) interface{} {
+		return strings.Split(value.(string), "@")[1]
+	}
+
+	assert.Equal(t, c.CountBy(cb), map[interface{}]int{"gmail.com": 2, "yahoo.com": 1})
 }
 
 func TestCollection_CrossJoin(t *testing.T) {

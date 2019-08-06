@@ -223,14 +223,19 @@ func (c NumberArrayCollection) Contains(value ...interface{}) bool {
 
 // CountBy counts the occurrences of values in the collection. By default, the method counts the occurrences of every element.
 func (c NumberArrayCollection) CountBy(callback ...interface{}) map[interface{}]int {
-	if len(callback) != 0 {
-		return callback[0].(func() map[interface{}]int)()
-	}
-
 	valueCount := make(map[interface{}]int)
-	for _, v := range c.value {
-		f, _ := v.Float64()
-		valueCount[f]++
+
+	if len(callback) > 0 {
+		if cb, ok := callback[0].(FilterFun); ok {
+			for _, v := range c.value {
+				valueCount[cb(v)]++
+			}
+		}
+	} else {
+		for _, v := range c.value {
+			vv, _ := v.Float64()
+			valueCount[vv]++
+		}
 	}
 
 	return valueCount
