@@ -99,6 +99,26 @@ func (c MapArrayCollection) Pluck(key string) Collection {
 	return Collect(s)
 }
 
+// Each iterates over the items in the collection and passes each item to a callback.
+func (c MapArrayCollection) Each(cb func(item, value interface{}) (interface{}, bool)) Collection {
+	var d = make([]map[string]interface{}, 0)
+	var (
+		newValue interface{}
+		stop     = false
+	)
+	for key, value := range c.value {
+		if !stop {
+			newValue, stop = cb(key, value)
+			d = append(d, newValue.(map[string]interface{}))
+		} else {
+			d = append(d, value)
+		}
+	}
+	return MapArrayCollection{
+		value: d,
+	}
+}
+
 // Prepend adds an item to the beginning of the collection.
 func (c MapArrayCollection) Prepend(values ...interface{}) Collection {
 
