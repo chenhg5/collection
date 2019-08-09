@@ -131,7 +131,6 @@ func ExampleBaseCollection_All() {
 }
 
 func TestCollection_Mode(t *testing.T) {
-	a := []string{"h", "e", "l", "l", "o", "w", "o", "l", "d"}
 	foo2 := []map[string]interface{}{
 		{
 			"foo": 10,
@@ -152,13 +151,12 @@ func TestCollection_Mode(t *testing.T) {
 	assert.Equal(t, m[1].(decimal.Decimal).IntPart() == int64(8) ||
 		m[1].(decimal.Decimal).IntPart() == int64(6), true)
 
-	assert.Equal(t, Collect(a).Mode(), []interface{}{"l"})
+	assert.Equal(t, Collect(`["h", "e", "l", "l", "o", "w", "o", "l", "d"]`).Mode(), []interface{}{"l"})
 	assert.Equal(t, Collect(foo2).Mode("foo"), []interface{}{40})
 }
 
 func ExampleBaseCollection_Mode() {
-	a := []string{"h", "e", "l", "l", "o", "w", "o", "l", "d"}
-	fmt.Println(Collect(a).Mode())
+	fmt.Println(Collect(`["h", "e", "l", "l", "o", "w", "o", "l", "d"]`).Mode())
 
 	// Output: []interface{}{"l"}
 

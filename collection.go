@@ -3,12 +3,37 @@ package collection
 import (
 	"bytes"
 	"encoding/gob"
+	"encoding/json"
 	"fmt"
 	"github.com/shopspring/decimal"
+	"strings"
 )
 
+// Collect transforms src into Collection. The src could be json string, []string,
+// []map[string]interface{}, map[string]interface{}, []int, []int16, []int32, []int64,
+// []float32, []float64, []interface{}.
 func Collect(src interface{}) Collection {
 	switch src.(type) {
+	case string:
+		jsonStr := strings.TrimSpace(src.(string))
+		if jsonStr[0] == '[' {
+			var p []interface{}
+			if err := json.Unmarshal([]byte(jsonStr), &p); err != nil {
+				panic(err)
+			}
+			return Collect(p)
+		}
+		if jsonStr[0] == '{' {
+			var p map[string]interface{}
+			if err := json.Unmarshal([]byte(jsonStr), &p); err != nil {
+				panic(err)
+			}
+			var c MapCollection
+			c.value = p
+			c.length = len(p)
+			return c
+		}
+		panic("invalid type")
 	case []string:
 		var c StringArrayCollection
 		c.value = src.([]string)
