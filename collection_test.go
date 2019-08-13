@@ -1179,3 +1179,93 @@ func ExampleBaseCollection_Where() {
 	//		{"name": "Jane", "sex": 2},
 	//	}
 }
+
+func TestBaseCollection_Length(t *testing.T) {
+	a := []map[string]interface{}{
+		{"name": "mike", "sex": 0},
+		{"name": "Mary", "sex": 1},
+		{"name": "Jane", "sex": 2},
+	}
+	assert.Equal(t, Collect(a).Length(), 3)
+}
+
+func ExampleBaseCollection_Length() {
+	a := []map[string]interface{}{
+		{"name": "mike", "sex": 0},
+		{"name": "Mary", "sex": 1},
+		{"name": "Jane", "sex": 2},
+	}
+
+	fmt.Println(Collect(a).Length())
+
+	// Output: 3
+}
+
+func TestBaseCollection_Select(t *testing.T) {
+	a := []map[string]interface{}{
+		{"name": "mike", "sex": 0},
+		{"name": "Mary", "sex": 1},
+		{"name": "Jane", "sex": 2},
+	}
+	assert.Equal(t, Collect(a).Select("sex").ToMapArray(), []map[string]interface{}{
+		{"sex": 2},
+	})
+}
+
+func ExampleBaseCollection_Select() {
+	a := []map[string]interface{}{
+		{"name": "mike", "sex": 0},
+		{"name": "Mary", "sex": 1},
+		{"name": "Jane", "sex": 2},
+	}
+
+	fmt.Println(Collect(a).Select("sex").ToMapArray())
+
+	// Output: []map[string]interface{}{
+	//		{"sex": 2},
+	//	}
+}
+
+func TestBaseCollection_ToStruct(t *testing.T) {
+	a := []map[string]interface{}{
+		{"name": "mike", "sex": 0},
+		{"name": "Mary", "sex": 1},
+		{"name": "Jane", "sex": 2},
+	}
+
+	type People struct {
+		Name string
+		Sex  int
+	}
+
+	var people = make([]People, 3)
+
+	Collect(a).ToStruct(&people)
+
+	assert.Equal(t, people[0].Name, "mike")
+}
+
+func ExampleBaseCollection_ToStruct() {
+	a := []map[string]interface{}{
+		{"name": "mike", "sex": 0},
+		{"name": "Mary", "sex": 1},
+		{"name": "Jane", "sex": 2},
+	}
+
+	type People struct {
+		Name string
+		Sex  int
+	}
+
+	var people = make([]People, 3)
+
+	Collect(a).ToStruct(&people)
+
+	fmt.Println(people)
+
+	// Output: []People{
+	//		{ Name: "mike", Sex: 0},
+	//		{ Name: "Mary", Sex: 1},
+	//		{ Name: "Jane", Sex: 2},
+	//	}
+}

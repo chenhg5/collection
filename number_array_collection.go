@@ -25,6 +25,11 @@ func (c NumberArrayCollection) Sum(key ...string) decimal.Decimal {
 	return sum
 }
 
+// Length return the length of the collection.
+func (c NumberArrayCollection) Length() int {
+	return len(c.value)
+}
+
 // Avg returns the average value of a given key.
 func (c NumberArrayCollection) Avg(key ...string) decimal.Decimal {
 

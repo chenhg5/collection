@@ -167,6 +167,16 @@ type Collection interface {
 	// All returns the underlying array represented by the collection.
 	All() []interface{}
 
+	// Length return the length of the collection.
+	Length() int
+
+	// ToStruct turn the collection to the specified struct using mapstructure.
+	// https://github.com/mitchellh/mapstructure
+	ToStruct(dist interface{})
+
+	// Select select the keys of collection and delete others.
+	Select(keys ...string) Collection
+
 	// Avg returns the average value of a given key.
 	Avg(key ...string) decimal.Decimal
 

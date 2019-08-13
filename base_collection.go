@@ -14,6 +14,22 @@ func (c BaseCollection) Value() interface{} {
 	return c.value
 }
 
+// Length return the length of the collection.
+func (c BaseCollection) Length() int {
+	return c.length
+}
+
+// Select select the keys of collection and delete others.
+func (c BaseCollection) Select(keys ...string) Collection {
+	panic("not implement")
+}
+
+// ToStruct turn the collection to the specified struct using mapstructure.
+// https://github.com/mitchellh/mapstructure
+func (c BaseCollection) ToStruct(dist interface{}) {
+	panic("not implement")
+}
+
 // All returns the underlying array represented by the collection.
 func (c BaseCollection) All() []interface{} {
 	panic("not implement")

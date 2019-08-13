@@ -25,6 +25,11 @@ func (c StringArrayCollection) Join(delimiter string) string {
 	return s
 }
 
+// Length return the length of the collection.
+func (c StringArrayCollection) Length() int {
+	return len(c.value)
+}
+
 // Combine combines the values of the collection, as keys, with the values of another array or collection.
 func (c StringArrayCollection) Combine(value []interface{}) Collection {
 	var (

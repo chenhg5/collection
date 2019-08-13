@@ -3,6 +3,7 @@ package collection
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/mitchellh/mapstructure"
 	"github.com/shopspring/decimal"
 	"math"
 	"math/rand"
@@ -23,6 +24,44 @@ func (c MapArrayCollection) Sum(key ...string) decimal.Decimal {
 	}
 
 	return sum
+}
+
+// Length return the length of the collection.
+func (c MapArrayCollection) Length() int {
+	return len(c.value)
+}
+
+// ToStruct turn the collection to the specified struct using mapstructure.
+// https://github.com/mitchellh/mapstructure
+func (c MapArrayCollection) ToStruct(dist interface{}) {
+	if err := mapstructure.Decode(c.value, dist); err != nil {
+		panic(err)
+	}
+}
+
+// Select select the keys of collection and delete others.
+func (c MapArrayCollection) Select(keys ...string) Collection {
+	var n = make([]map[string]interface{}, len(c.value))
+	copy(n, c.value)
+
+	for _, value := range n {
+		for k := range value {
+			exist := false
+			for i := 0; i < len(keys); i++ {
+				if keys[i] == k {
+					exist = true
+					break
+				}
+			}
+			if !exist {
+				delete(value, k)
+			}
+		}
+	}
+
+	return MapArrayCollection{
+		value: n,
+	}
 }
 
 // Sum returns the sum of all items in the collection.

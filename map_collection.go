@@ -3,6 +3,7 @@ package collection
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/mitchellh/mapstructure"
 )
 
 type MapCollection struct {
@@ -24,6 +25,36 @@ func (c MapCollection) Only(keys []string) Collection {
 	d.length = len(m)
 
 	return d
+}
+
+// ToStruct turn the collection to the specified struct using mapstructure.
+// https://github.com/mitchellh/mapstructure
+func (c MapCollection) ToStruct(dist interface{}) {
+	if err := mapstructure.Decode(c.value, dist); err != nil {
+		panic(err)
+	}
+}
+
+// Select select the keys of collection and delete others.
+func (c MapCollection) Select(keys ...string) Collection {
+	n := copyMap(c.value)
+
+	for key := range n {
+		exist := false
+		for i := 0; i < len(keys); i++ {
+			if keys[i] == key {
+				exist = true
+				break
+			}
+		}
+		if !exist {
+			delete(n, key)
+		}
+	}
+
+	return MapCollection{
+		value: n,
+	}
 }
 
 // Prepend adds an item to the beginning of the collection.
