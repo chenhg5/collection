@@ -4,4 +4,4 @@ go:
 before_script:
   - git clone --depth=50 --branch=master https://github.com/chenhg5/collection.git /home/travis/gopath/src/collection
 script:
-  - make test
+  - go test -v ./
