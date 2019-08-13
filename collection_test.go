@@ -52,7 +52,7 @@ func ExampleBaseCollection_Sum() {
 }
 
 func TestNumberArrayCollection_Avg(t *testing.T) {
-	assert.Equal(t, Collect(numbers).Avg().IntPart(), int64(25))
+	assert.Equal(t, Collect(numbers).Avg().IntPart(), int64(5))
 
 	var floatTest = []float64{143.66, -14.55}
 	assert.Equal(t, Collect(floatTest).Avg().String(), "64.555")
@@ -88,7 +88,7 @@ func ExampleBaseCollection_Splice() {
 	a := []string{"h", "e", "l", "l", "o"}
 	fmt.Println(Collect(a).Splice(1, 3).ToStringArray())
 
-	// Output: []string{"e", "l", "l"}
+	// Output: [e l l]
 }
 
 func TestStringArrayCollection_Take(t *testing.T) {
@@ -112,7 +112,7 @@ func ExampleBaseCollection_Take() {
 	a := []string{"h", "e", "l", "l", "o"}
 	fmt.Println(Collect(a).Take(-2).ToStringArray())
 
-	// Output: []string{"l", "o"}
+	// Output: [l o]
 }
 
 func TestCollection_All(t *testing.T) {
@@ -127,7 +127,7 @@ func ExampleBaseCollection_All() {
 	a := []string{"h", "e", "l", "l", "o"}
 	fmt.Println(Collect(a).All())
 
-	// Output: []interface{}{"h", "e", "l", "l", "o"}
+	// Output: [h e l l o]
 }
 
 func TestCollection_Mode(t *testing.T) {
@@ -156,9 +156,6 @@ func TestCollection_Mode(t *testing.T) {
 }
 
 func ExampleBaseCollection_Mode() {
-	fmt.Println(Collect(`["h", "e", "l", "l", "o", "w", "o", "l", "d"]`).Mode())
-
-	// Output: []interface{}{"l"}
 
 	foo2 := []map[string]interface{}{
 		{
@@ -174,9 +171,11 @@ func ExampleBaseCollection_Mode() {
 		},
 	}
 
+	fmt.Println(Collect(`["h", "e", "l", "l", "o", "w", "o", "l", "d"]`).Mode())
 	fmt.Println(Collect(foo2).Mode("foo"))
 
-	// Output: []interface{}{40}
+	// Output: [l]
+	// [40]
 }
 
 func TestCollection_Chunk(t *testing.T) {
@@ -191,7 +190,7 @@ func ExampleBaseCollection_Chunk() {
 	a := []string{"h", "e", "l", "l", "o"}
 	fmt.Println(Collect(a).Chunk(3).ToMultiDimensionalArray()[0])
 
-	// Output: []interface{}{"h", "e", "l"}
+	// Output: [h e l]
 }
 
 func TestCollection_Collapse(t *testing.T) {
@@ -283,7 +282,7 @@ func ExampleBaseCollection_Diff() {
 	a := []string{"h", "e", "l", "l", "o"}
 	fmt.Println(Collect(a).Diff([]string{"e", "o"}).ToStringArray())
 
-	// Output: []string{"h", "l", "l"}
+	// Output: [h l l]
 }
 
 func TestMapCollection_DiffAssoc(t *testing.T) {
@@ -324,7 +323,7 @@ func ExampleBaseCollection_Each() {
 		return value.(decimal.Decimal).IntPart() + 2, false
 	}).ToIntArray())
 
-	// Output: []int{4, 5, 6, 7, 8, 9}
+	// Output: [4 5 6 7 8 9]
 }
 
 func TestNumberArrayCollection_Every(t *testing.T) {
@@ -362,9 +361,7 @@ func ExampleBaseCollection_Except() {
 	}
 	fmt.Println(Collect(a).Except([]string{"name"}).ToMap())
 
-	// Output: map[string]interface{}{
-	//		"sex": 1,
-	//	}
+	// Output: map[sex:1]
 }
 
 func TestNumberArrayCollection_Filter(t *testing.T) {
@@ -381,7 +378,7 @@ func ExampleBaseCollection_Filter() {
 		return value.(decimal.Decimal).IntPart() > 4
 	}).ToIntArray())
 
-	// Output: []int{5, 6, 7}
+	// Output: [5 6 7]
 }
 
 func TestNumberArrayCollection_First(t *testing.T) {
@@ -420,9 +417,7 @@ func ExampleBaseCollection_FirstWhere() {
 	}
 	fmt.Println(Collect(a).FirstWhere("sex", 1))
 
-	// Output: map[string]interface{}{
-	//		"name": "Mary", "sex": 1,
-	//	}
+	// Output: map[name:Mary sex:1]
 }
 
 func TestMapCollection_FlatMap(t *testing.T) {
@@ -444,9 +439,7 @@ func ExampleBaseCollection_FlatMap() {
 		return "user_" + value.(string)
 	}).ToMap())
 
-	// Output: map[string]interface{}{
-	//		"name": "user_mike",
-	// }
+	// Output: map[name:user_mike]
 }
 
 func TestMapCollection_Flip(t *testing.T) {
@@ -464,9 +457,7 @@ func ExampleBaseCollection_Flip() {
 	}
 	fmt.Println(Collect(a).Flip().ToMap())
 
-	// Output: map[string]interface{}{
-	//		"mike": "name",
-	//	}
+	// Output: map[mike:name]
 }
 
 func TestMapCollection_Forget(t *testing.T) {
@@ -486,9 +477,7 @@ func ExampleBaseCollection_Forget() {
 	}
 	fmt.Println(Collect(a).Forget("name").ToMap())
 
-	// Output: map[string]interface{}{
-	//		"sex": 1,
-	//	}
+	// Output: map[sex:1]
 }
 
 func TestNumberArrayCollection_ForPage(t *testing.T) {
@@ -502,7 +491,7 @@ func ExampleBaseCollection_ForPage() {
 
 	fmt.Println(Collect(a).ForPage(2, 3).ToIntArray())
 
-	// Output: []int{5, 6, 7}
+	// Output: [5 6 7]
 }
 
 func TestMapCollection_Get(t *testing.T) {
@@ -543,10 +532,7 @@ func ExampleBaseCollection_GroupBy() {
 
 	fmt.Println(Collect(a).GroupBy("sex").ToMap()["1"])
 
-	// Output: []map[string]interface{}{
-	//		{"name": "Mary", "sex": 1},
-	//		{"name": "Jane", "sex": 1},
-	//	}
+	// Output: [map[name:Mary sex:1] map[name:Jane sex:1]]
 }
 
 func TestMapCollection_Has(t *testing.T) {
@@ -597,7 +583,7 @@ func ExampleBaseCollection_Intersect() {
 
 	fmt.Println(Collect(a).Intersect([]string{"e", "l", "l", "f"}).ToStringArray())
 
-	// Output: []string{"e", "l", "l"}
+	// Output: [e l l]
 }
 
 func TestMapCollection_IntersectByKeys(t *testing.T) {
@@ -624,9 +610,7 @@ func ExampleBaseCollection_IntersectByKeys() {
 		"city": "beijing",
 	}).ToMap())
 
-	// Output: map[string]interface{}{
-	//		"name": "mike",
-	//	}
+	// Output: map[name:mike]
 }
 
 func TestStringArrayCollection_IsEmpty(t *testing.T) {
@@ -675,9 +659,7 @@ func ExampleBaseCollection_KeyBy() {
 
 	fmt.Println(Collect(a).KeyBy("sex").ToMap()["1"])
 
-	// Output: []map[string]interface{}{
-	//		{"name": "Jane", "sex": 1},
-	//	}
+	// Output: [map[name:Jane sex:1]]
 }
 
 func TestMapCollection_Keys(t *testing.T) {
@@ -695,8 +677,6 @@ func ExampleBaseCollection_Keys() {
 	}
 
 	fmt.Println(Collect(a).Keys().ToStringArray())
-
-	// Output: []string{"name", "sex"}
 }
 
 func TestBaseCollection_Last(t *testing.T) {
@@ -750,7 +730,7 @@ func ExampleBaseCollection_Merge() {
 
 	fmt.Println(Collect(a).Merge([]int{8, 9}).ToIntArray())
 
-	// Output: []int{2, 3, 4, 5, 6, 7, 8, 9}
+	// Output: [2 3 4 5 6 7 8 9]
 }
 
 func TestBaseCollection_Pad(t *testing.T) {
@@ -764,7 +744,7 @@ func ExampleBaseCollection_Pad() {
 
 	fmt.Println(Collect(a).Pad(3, 0).ToIntArray())
 
-	// Output: []int{2, 0, 0}
+	// Output: [2 0 0]
 }
 
 func TestBaseCollection_Partition(t *testing.T) {
@@ -786,12 +766,10 @@ func ExampleBaseCollection_Partition() {
 	})
 
 	fmt.Println(p1.ToIntArray())
-
-	// Output: []int{6, 7}
-
 	fmt.Println(p2.ToIntArray())
 
-	// Output: []int{2, 3, 4, 5}
+	// Output: [6 7]
+	// [2 3 4 5]
 }
 
 func TestBaseCollection_Pop(t *testing.T) {
@@ -819,7 +797,7 @@ func ExampleBaseCollection_Push() {
 
 	fmt.Println(Collect(a).Push(8).ToIntArray())
 
-	// Output: []int{2, 3, 4, 5, 6, 7, 8}
+	// Output: [2 3 4 5 6 7 8]
 }
 
 func TestBaseCollection_Random(t *testing.T) {
@@ -830,10 +808,7 @@ func TestBaseCollection_Random(t *testing.T) {
 
 func ExampleBaseCollection_Random() {
 	a := []int{2, 3, 4, 5, 6, 7}
-
 	fmt.Println(Collect(a).Random().Value())
-
-	// Output: 3
 }
 
 func TestBaseCollection_Reduce(t *testing.T) {
@@ -877,7 +852,7 @@ func ExampleBaseCollection_Reject() {
 		return value.(decimal.Decimal).GreaterThanOrEqual(nd(3))
 	}).ToIntArray())
 
-	// Output: []int{2}
+	// Output: [2]
 }
 
 func TestBaseCollection_Reverse(t *testing.T) {
@@ -891,7 +866,7 @@ func ExampleBaseCollection_Reverse() {
 
 	fmt.Println(Collect(a).Reverse().ToIntArray())
 
-	// Output: []int{7, 6, 5, 4, 3, 2}
+	// Output: [7 6 5 4 3 2]
 }
 
 func TestBaseCollection_Search(t *testing.T) {
@@ -925,7 +900,7 @@ func ExampleBaseCollection_Shift() {
 
 	fmt.Println(Collect(a).Shift().ToIntArray())
 
-	// Output: []int{3, 4, 5, 6, 7}
+	// Output: [3 4 5 6 7]
 }
 
 func TestBaseCollection_Shuffle(t *testing.T) {
@@ -951,7 +926,7 @@ func ExampleBaseCollection_Slice() {
 
 	fmt.Println(Collect(a).Slice(1, 2).ToIntArray())
 
-	// Output: []int{3, 4}
+	// Output: [3 4]
 }
 
 func TestBaseCollection_Sort(t *testing.T) {
@@ -965,7 +940,7 @@ func ExampleBaseCollection_Sort() {
 
 	fmt.Println(Collect(a).Sort().ToIntArray())
 
-	// Output: []int{2, 3, 4, 5, 6, 7}
+	// Output: [2 3 4 5 6 7]
 }
 
 func TestBaseCollection_SortByDesc(t *testing.T) {
@@ -979,7 +954,7 @@ func ExampleBaseCollection_SortByDesc() {
 
 	fmt.Println(Collect(a).SortByDesc().ToIntArray())
 
-	// Output: []int{7, 6, 5, 4, 3, 2}
+	// Output: [7 6 5 4 3 2]
 }
 
 func TestBaseCollection_Split(t *testing.T) {
@@ -1005,7 +980,7 @@ func ExampleBaseCollection_Unique() {
 
 	fmt.Println(Collect(a).Unique().ToIntArray())
 
-	// Output: []int{4, 5, 2, 3, 6, 7}
+	// Output: [4 5 2 3 6 7]
 }
 
 func TestBaseCollection_WhereIn(t *testing.T) {
@@ -1029,10 +1004,7 @@ func ExampleBaseCollection_WhereIn() {
 
 	fmt.Println(Collect(a).WhereIn("sex", []interface{}{1, 2}).ToMapArray())
 
-	// Output: []map[string]interface{}{
-	//		{"name": "Mary", "sex": 1},
-	//		{"name": "Jane", "sex": 2},
-	//	}
+	// Output: [map[name:Mary sex:1] map[name:Jane sex:2]]
 }
 
 func TestBaseCollection_WhereNotIn(t *testing.T) {
@@ -1055,9 +1027,7 @@ func ExampleBaseCollection_WhereNotIn() {
 
 	fmt.Println(Collect(a).WhereNotIn("sex", []interface{}{1, 2}).ToMapArray())
 
-	// Output: []map[string]interface{}{
-	//		{"name": "mike", "sex": 0},
-	//	}
+	// Output: [map[name:mike sex:0]]
 }
 
 func TestBaseCollection_ToJson(t *testing.T) {
@@ -1098,7 +1068,7 @@ func ExampleBaseCollection_ToIntArray() {
 
 	fmt.Println(Collect(a).ToIntArray())
 
-	// Output: []int{4, 5, 2, 3, 6, 7}
+	// Output: [4 5 2 3 6 7]
 }
 
 func TestBaseCollection_ToStringArray(t *testing.T) {
@@ -1111,7 +1081,7 @@ func ExampleBaseCollection_ToStringArray() {
 
 	fmt.Println(Collect(a).ToStringArray())
 
-	// Output: []string{"h", "e", "l", "l", "o"}
+	// Output: [h e l l o]
 }
 
 func TestBaseCollection_ToMap(t *testing.T) {
@@ -1130,7 +1100,7 @@ func ExampleBaseCollection_ToMap() {
 
 	fmt.Println(Collect(a).ToStringArray())
 
-	// Output: []string{"h", "e", "l", "l", "o"}
+	// Output: [h e l l o]
 }
 
 func TestBaseCollection_ToMapArray(t *testing.T) {
@@ -1150,9 +1120,9 @@ func ExampleBaseCollection_ToMapArray() {
 		{"name": "Jane", "sex": 2},
 	}
 
-	fmt.Println(Collect(a).ToStringArray())
+	fmt.Println(Collect(a).ToMapArray())
 
-	// Output: []string{"h", "e", "l", "l", "o"}
+	// Output: [map[name:Mary sex:1] map[name:Jane sex:2]]
 }
 
 func TestBaseCollection_Where(t *testing.T) {
@@ -1175,9 +1145,7 @@ func ExampleBaseCollection_Where() {
 
 	fmt.Println(Collect(a).Where("sex", 2).ToMapArray())
 
-	// Output: []map[string]interface{}{
-	//		{"name": "Jane", "sex": 2},
-	//	}
+	// Output: [map[name:Jane sex:2]]
 }
 
 func TestBaseCollection_Length(t *testing.T) {
@@ -1208,6 +1176,8 @@ func TestBaseCollection_Select(t *testing.T) {
 		{"name": "Jane", "sex": 2},
 	}
 	assert.Equal(t, Collect(a).Select("sex").ToMapArray(), []map[string]interface{}{
+		{"sex": 0},
+		{"sex": 1},
 		{"sex": 2},
 	})
 }
@@ -1221,9 +1191,7 @@ func ExampleBaseCollection_Select() {
 
 	fmt.Println(Collect(a).Select("sex").ToMapArray())
 
-	// Output: []map[string]interface{}{
-	//		{"sex": 2},
-	//	}
+	// Output: [map[sex:0] map[sex:1] map[sex:2]]
 }
 
 func TestBaseCollection_ToStruct(t *testing.T) {
@@ -1263,9 +1231,5 @@ func ExampleBaseCollection_ToStruct() {
 
 	fmt.Println(people)
 
-	// Output: []People{
-	//		{ Name: "mike", Sex: 0},
-	//		{ Name: "Mary", Sex: 1},
-	//		{ Name: "Jane", Sex: 2},
-	//	}
+	// Output: [{mike 0} {Mary 1} {Jane 2}]
 }

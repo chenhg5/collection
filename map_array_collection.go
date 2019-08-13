@@ -765,15 +765,15 @@ func (c MapArrayCollection) WhereIn(key string, in []interface{}) Collection {
 func (c MapArrayCollection) WhereNotIn(key string, in []interface{}) Collection {
 	var d = make([]map[string]interface{}, 0)
 	for i := 0; i < len(c.value); i++ {
+		isIn := false
 		for j := 0; j < len(in); j++ {
-			isIn := false
 			if c.value[i][key] == in[j] {
 				isIn = true
 				break
 			}
-			if !isIn {
-				d = append(d, copyMap(c.value[i]))
-			}
+		}
+		if !isIn {
+			d = append(d, copyMap(c.value[i]))
 		}
 	}
 	return MapArrayCollection{
