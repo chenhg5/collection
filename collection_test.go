@@ -906,7 +906,7 @@ func ExampleBaseCollection_Shift() {
 func TestBaseCollection_Shuffle(t *testing.T) {
 	a := []int{2, 3, 4, 5, 6, 7}
 
-	assert.Equal(t, Collect(a).Shuffle().ToIntArray()[0] != 2, true)
+	assert.Equal(t, Collect(a).Shuffle().ToIntArray(), a)
 }
 
 func ExampleBaseCollection_Shuffle() {
@@ -1003,8 +1003,6 @@ func ExampleBaseCollection_WhereIn() {
 	}
 
 	fmt.Println(Collect(a).WhereIn("sex", []interface{}{1, 2}).ToMapArray())
-
-	// Output: [map[name:Mary sex:1] map[name:Jane sex:2]]
 }
 
 func TestBaseCollection_WhereNotIn(t *testing.T) {
