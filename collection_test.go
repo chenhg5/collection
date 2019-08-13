@@ -906,7 +906,7 @@ func ExampleBaseCollection_Shift() {
 func TestBaseCollection_Shuffle(t *testing.T) {
 	a := []int{2, 3, 4, 5, 6, 7}
 
-	assert.Equal(t, Collect(a).Shuffle().ToIntArray(), a)
+	assert.Equal(t, reflect.DeepEqual(Collect(a).Shuffle().ToIntArray(), a), false)
 }
 
 func ExampleBaseCollection_Shuffle() {
