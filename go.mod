@@ -1,4 +1,4 @@
-module collection
+module github.com/chenhg5/collection
 
 go 1.12
 
