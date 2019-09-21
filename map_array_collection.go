@@ -417,31 +417,31 @@ func (c MapArrayCollection) FirstWhere(key string, values ...interface{}) map[st
 		switch values[0].(string) {
 		case ">":
 			for _, value := range c.value {
-				if nd(value[key]).GreaterThan(nd(values[0])) {
+				if nd(value[key]).GreaterThan(nd(values[1])) {
 					return value
 				}
 			}
 		case ">=":
 			for _, value := range c.value {
-				if nd(value[key]).GreaterThanOrEqual(nd(values[0])) {
+				if nd(value[key]).GreaterThanOrEqual(nd(values[1])) {
 					return value
 				}
 			}
 		case "<":
 			for _, value := range c.value {
-				if nd(value[key]).LessThan(nd(values[0])) {
+				if nd(value[key]).LessThan(nd(values[1])) {
 					return value
 				}
 			}
 		case "<=":
 			for _, value := range c.value {
-				if nd(value[key]).LessThanOrEqual(nd(values[0])) {
+				if nd(value[key]).LessThanOrEqual(nd(values[1])) {
 					return value
 				}
 			}
 		case "=":
 			for _, value := range c.value {
-				if value[key] == values[0] {
+				if value[key] == values[1] {
 					return value
 				}
 			}
@@ -585,10 +585,10 @@ func (c MapArrayCollection) Partition(cb PartCB) (Collection, Collection) {
 	}
 
 	return MapArrayCollection{
-			value: d1,
-		}, MapArrayCollection{
-			value: d2,
-		}
+		value: d1,
+	}, MapArrayCollection{
+		value: d2,
+	}
 }
 
 // Pop removes and returns the last item from the collection.
