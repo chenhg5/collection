@@ -1141,6 +1141,8 @@ func ExampleBaseCollection_Where() {
 		{"name": "Jane", "sex": 2},
 	}
 
+	Collect(a).Where("sex", ">", 1).ToMapArray()
+	Collect(a).Where("sex", "<", 1).ToMapArray()
 	fmt.Println(Collect(a).Where("sex", 2).ToMapArray())
 
 	// Output: [map[name:Jane sex:2]]

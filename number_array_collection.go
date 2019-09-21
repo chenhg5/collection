@@ -490,10 +490,10 @@ func (c NumberArrayCollection) Partition(cb PartCB) (Collection, Collection) {
 	}
 
 	return NumberArrayCollection{
-		value: d1,
-	}, NumberArrayCollection{
-		value: d2,
-	}
+			value: d1,
+		}, NumberArrayCollection{
+			value: d2,
+		}
 }
 
 // Pop removes and returns the last item from the collection.

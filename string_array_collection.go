@@ -471,10 +471,10 @@ func (c StringArrayCollection) Partition(cb PartCB) (Collection, Collection) {
 	}
 
 	return StringArrayCollection{
-		value: d1,
-	}, StringArrayCollection{
-		value: d2,
-	}
+			value: d1,
+		}, StringArrayCollection{
+			value: d2,
+		}
 }
 
 // Pop removes and returns the last item from the collection.
