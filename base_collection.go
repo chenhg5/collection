@@ -75,6 +75,11 @@ func (c BaseCollection) ToIntArray() []int {
 	panic("not implement")
 }
 
+// ToInt64Array converts the collection into a plain golang slice which contains int64.
+func (c BaseCollection) ToInt64Array() []int64 {
+	panic("not implement")
+}
+
 // Mode returns the mode value of a given key.
 func (c BaseCollection) Mode(key ...string) []interface{} {
 	panic("not implement")

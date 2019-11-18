@@ -144,11 +144,74 @@ func Collect(src interface{}) Collection {
 			c.value = f
 			c.length = len(src.([]interface{}))
 			return c
-		case []uint8:
+		case uint8:
 			var c StringArrayCollection
 			var f = make([]string, len(src.([]interface{})))
 			for k, v := range src.([]interface{}) {
 				f[k] = string(v.([]uint8))
+			}
+			c.value = f
+			c.length = len(src.([]interface{}))
+			return c
+		case int:
+			var c NumberArrayCollection
+			var d = make([]decimal.Decimal, len(src.([]interface{})))
+			for k, v := range src.([]interface{}) {
+				d[k] = decimal.New(int64(v.(int)), 0)
+			}
+			c.value = d
+			c.length = len(src.([]interface{}))
+			return c
+		case int8:
+			var c NumberArrayCollection
+			var d = make([]decimal.Decimal, len(src.([]interface{})))
+			for k, v := range src.([]interface{}) {
+				d[k] = decimal.New(int64(v.(int8)), 0)
+			}
+			c.value = d
+			c.length = len(src.([]interface{}))
+			return c
+		case int16:
+			var c NumberArrayCollection
+			var d = make([]decimal.Decimal, len(src.([]interface{})))
+			for k, v := range src.([]interface{}) {
+				d[k] = decimal.New(int64(v.(int16)), 0)
+			}
+			c.value = d
+			c.length = len(src.([]interface{}))
+			return c
+		case int32:
+			var c NumberArrayCollection
+			var d = make([]decimal.Decimal, len(src.([]interface{})))
+			for k, v := range src.([]interface{}) {
+				d[k] = decimal.New(int64(v.(int32)), 0)
+			}
+			c.value = d
+			c.length = len(src.([]interface{}))
+			return c
+		case int64:
+			var c NumberArrayCollection
+			var d = make([]decimal.Decimal, len(src.([]interface{})))
+			for k, v := range src.([]interface{}) {
+				d[k] = decimal.New(v.(int64), 0)
+			}
+			c.value = d
+			c.length = len(src.([]interface{}))
+			return c
+		case float32:
+			var c NumberArrayCollection
+			var f = make([]decimal.Decimal, len(src.([]interface{})))
+			for k, v := range src.([]interface{}) {
+				f[k] = decimal.NewFromFloat32(v.(float32))
+			}
+			c.value = f
+			c.length = len(src.([]interface{}))
+			return c
+		case float64:
+			var c NumberArrayCollection
+			var f = make([]decimal.Decimal, len(src.([]interface{})))
+			for k, v := range src.([]interface{}) {
+				f[k] = decimal.NewFromFloat(v.(float64))
 			}
 			c.value = f
 			c.length = len(src.([]interface{}))
@@ -402,6 +465,9 @@ type Collection interface {
 
 	// ToIntArray converts the collection into a plain golang slice which contains int.
 	ToIntArray() []int
+
+	// ToInt64Array converts the collection into a plain golang slice which contains int.
+	ToInt64Array() []int64
 
 	// ToStringArray converts the collection into a plain golang slice which contains string.
 	ToStringArray() []string

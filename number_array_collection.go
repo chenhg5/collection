@@ -172,6 +172,15 @@ func (c NumberArrayCollection) ToIntArray() []int {
 	return v
 }
 
+// ToInt64Array converts the collection into a plain golang slice which contains int64.
+func (c NumberArrayCollection) ToInt64Array() []int64 {
+	var v = make([]int64, len(c.value))
+	for i, value := range c.value {
+		v[i] = value.IntPart()
+	}
+	return v
+}
+
 // Chunk breaks the collection into multiple, smaller collections of a given size.
 func (c NumberArrayCollection) Chunk(num int) MultiDimensionalArrayCollection {
 	var d MultiDimensionalArrayCollection
@@ -490,10 +499,10 @@ func (c NumberArrayCollection) Partition(cb PartCB) (Collection, Collection) {
 	}
 
 	return NumberArrayCollection{
-			value: d1,
-		}, NumberArrayCollection{
-			value: d2,
-		}
+		value: d1,
+	}, NumberArrayCollection{
+		value: d2,
+	}
 }
 
 // Pop removes and returns the last item from the collection.
