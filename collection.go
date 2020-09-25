@@ -13,9 +13,9 @@ import (
 // []map[string]interface{}, map[string]interface{}, []int, []int16, []int32, []int64,
 // []float32, []float64, []interface{}.
 func Collect(src interface{}) Collection {
-	switch src.(type) {
+	switch val := src.(type) {
 	case string:
-		jsonStr := strings.TrimSpace(src.(string))
+		jsonStr := strings.TrimSpace(val)
 		if jsonStr[0] == '[' {
 			var p []interface{}
 			if err := json.Unmarshal([]byte(jsonStr), &p); err != nil {
@@ -36,185 +36,185 @@ func Collect(src interface{}) Collection {
 		panic("invalid type")
 	case []string:
 		var c StringArrayCollection
-		c.value = src.([]string)
-		c.length = len(src.([]string))
+		c.value = val
+		c.length = len(val)
 		return c
 	case []map[string]interface{}:
 		var c MapArrayCollection
-		c.value = src.([]map[string]interface{})
-		c.length = len(src.([]map[string]interface{}))
+		c.value = val
+		c.length = len(val)
 		return c
 	case map[string]interface{}:
 		var c MapCollection
-		c.value = src.(map[string]interface{})
-		c.length = len(src.(map[string]interface{}))
+		c.value = val
+		c.length = len(val)
 		return c
 	case []int:
 		var c NumberArrayCollection
-		var d = make([]decimal.Decimal, len(src.([]int)))
-		for k, v := range src.([]int) {
+		var d = make([]decimal.Decimal, len(val))
+		for k, v := range val {
 			d[k] = decimal.New(int64(v), 0)
 		}
 		c.value = d
-		c.length = len(src.([]int))
+		c.length = len(val)
 		return c
 	case []int8:
 		var c NumberArrayCollection
-		var d = make([]decimal.Decimal, len(src.([]int8)))
-		for k, v := range src.([]int8) {
+		var d = make([]decimal.Decimal, len(val))
+		for k, v := range val {
 			d[k] = decimal.New(int64(v), 0)
 		}
 		c.value = d
-		c.length = len(src.([]int8))
+		c.length = len(val)
 		return c
 	case []int16:
 		var c NumberArrayCollection
-		var d = make([]decimal.Decimal, len(src.([]int16)))
-		for k, v := range src.([]int16) {
+		var d = make([]decimal.Decimal, len(val))
+		for k, v := range val {
 			d[k] = decimal.New(int64(v), 0)
 		}
 		c.value = d
-		c.length = len(src.([]int16))
+		c.length = len(val)
 		return c
 	case []int32:
 		var c NumberArrayCollection
-		var d = make([]decimal.Decimal, len(src.([]int32)))
-		for k, v := range src.([]int32) {
+		var d = make([]decimal.Decimal, len(val))
+		for k, v := range val {
 			d[k] = decimal.New(int64(v), 0)
 		}
 		c.value = d
-		c.length = len(src.([]int32))
+		c.length = len(val)
 		return c
 	case []int64:
 		var c NumberArrayCollection
-		var d = make([]decimal.Decimal, len(src.([]int64)))
-		for k, v := range src.([]int64) {
+		var d = make([]decimal.Decimal, len(val))
+		for k, v := range val {
 			d[k] = decimal.New(v, 0)
 		}
 		c.value = d
-		c.length = len(src.([]int64))
+		c.length = len(val)
 		return c
 	case []float32:
 		var c NumberArrayCollection
-		var f = make([]decimal.Decimal, len(src.([]float32)))
-		for k, v := range src.([]float32) {
+		var f = make([]decimal.Decimal, len(val))
+		for k, v := range val {
 			f[k] = decimal.NewFromFloat32(v)
 		}
 		c.value = f
-		c.length = len(src.([]float32))
+		c.length = len(val)
 		return c
 	case []float64:
 		var c NumberArrayCollection
-		var f = make([]decimal.Decimal, len(src.([]float64)))
-		for k, v := range src.([]float64) {
+		var f = make([]decimal.Decimal, len(val))
+		for k, v := range val {
 			f[k] = decimal.NewFromFloat(v)
 		}
 		c.value = f
-		c.length = len(src.([]float64))
+		c.length = len(val)
 		return c
 	case []interface{}:
-		if len(src.([]interface{})) == 0 {
+		if len(val) == 0 {
 			panic("wrong value")
 		}
-		switch src.([]interface{})[0].(type) {
+		switch val[0].(type) {
 		case map[string]interface{}:
 			var c MapArrayCollection
-			var f = make([]map[string]interface{}, len(src.([]interface{})))
-			for k, v := range src.([]interface{}) {
+			var f = make([]map[string]interface{}, len(val))
+			for k, v := range val {
 				f[k] = v.(map[string]interface{})
 			}
 			c.value = f
-			c.length = len(src.([]interface{}))
+			c.length = len(val)
 			return c
 		case decimal.Decimal:
 			var c NumberArrayCollection
-			var f = make([]decimal.Decimal, len(src.([]interface{})))
-			for k, v := range src.([]interface{}) {
+			var f = make([]decimal.Decimal, len(val))
+			for k, v := range val {
 				f[k] = v.(decimal.Decimal)
 			}
 			c.value = f
-			c.length = len(src.([]interface{}))
+			c.length = len(val)
 			return c
 		case string:
 			var c StringArrayCollection
-			var f = make([]string, len(src.([]interface{})))
-			for k, v := range src.([]interface{}) {
+			var f = make([]string, len(val))
+			for k, v := range val {
 				f[k] = v.(string)
 			}
 			c.value = f
-			c.length = len(src.([]interface{}))
+			c.length = len(val)
 			return c
 		case uint8:
 			var c StringArrayCollection
-			var f = make([]string, len(src.([]interface{})))
-			for k, v := range src.([]interface{}) {
+			var f = make([]string, len(val))
+			for k, v := range val {
 				f[k] = string(v.([]uint8))
 			}
 			c.value = f
-			c.length = len(src.([]interface{}))
+			c.length = len(val)
 			return c
 		case int:
 			var c NumberArrayCollection
-			var d = make([]decimal.Decimal, len(src.([]interface{})))
-			for k, v := range src.([]interface{}) {
+			var d = make([]decimal.Decimal, len(val))
+			for k, v := range val {
 				d[k] = decimal.New(int64(v.(int)), 0)
 			}
 			c.value = d
-			c.length = len(src.([]interface{}))
+			c.length = len(val)
 			return c
 		case int8:
 			var c NumberArrayCollection
-			var d = make([]decimal.Decimal, len(src.([]interface{})))
-			for k, v := range src.([]interface{}) {
+			var d = make([]decimal.Decimal, len(val))
+			for k, v := range val {
 				d[k] = decimal.New(int64(v.(int8)), 0)
 			}
 			c.value = d
-			c.length = len(src.([]interface{}))
+			c.length = len(val)
 			return c
 		case int16:
 			var c NumberArrayCollection
-			var d = make([]decimal.Decimal, len(src.([]interface{})))
-			for k, v := range src.([]interface{}) {
+			var d = make([]decimal.Decimal, len(val))
+			for k, v := range val {
 				d[k] = decimal.New(int64(v.(int16)), 0)
 			}
 			c.value = d
-			c.length = len(src.([]interface{}))
+			c.length = len(val)
 			return c
 		case int32:
 			var c NumberArrayCollection
-			var d = make([]decimal.Decimal, len(src.([]interface{})))
-			for k, v := range src.([]interface{}) {
+			var d = make([]decimal.Decimal, len(val))
+			for k, v := range val {
 				d[k] = decimal.New(int64(v.(int32)), 0)
 			}
 			c.value = d
-			c.length = len(src.([]interface{}))
+			c.length = len(val)
 			return c
 		case int64:
 			var c NumberArrayCollection
-			var d = make([]decimal.Decimal, len(src.([]interface{})))
-			for k, v := range src.([]interface{}) {
+			var d = make([]decimal.Decimal, len(val))
+			for k, v := range val {
 				d[k] = decimal.New(v.(int64), 0)
 			}
 			c.value = d
-			c.length = len(src.([]interface{}))
+			c.length = len(val)
 			return c
 		case float32:
 			var c NumberArrayCollection
-			var f = make([]decimal.Decimal, len(src.([]interface{})))
-			for k, v := range src.([]interface{}) {
+			var f = make([]decimal.Decimal, len(val))
+			for k, v := range val {
 				f[k] = decimal.NewFromFloat32(v.(float32))
 			}
 			c.value = f
-			c.length = len(src.([]interface{}))
+			c.length = len(val)
 			return c
 		case float64:
 			var c NumberArrayCollection
-			var f = make([]decimal.Decimal, len(src.([]interface{})))
-			for k, v := range src.([]interface{}) {
+			var f = make([]decimal.Decimal, len(val))
+			for k, v := range val {
 				f[k] = decimal.NewFromFloat(v.(float64))
 			}
 			c.value = f
-			c.length = len(src.([]interface{}))
+			c.length = len(val)
 			return c
 		default:
 			panic("wrong type")
